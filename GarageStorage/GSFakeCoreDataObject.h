@@ -11,8 +11,8 @@
 @interface GSFakeCoreDataObject : NSObject
 
 @property (nonatomic, strong) NSString *gs_Identifier;
-@property (nonatomic, strong) NSString *gs_type;
-@property (nonatomic, strong) NSNumber *gs_version;
-@property (nonatomic, strong) NSString *gs_data;
+@property (nonatomic, strong) NSString *gs_Type;
+@property (nonatomic, strong) NSNumber *gs_Version;
+@property (nonatomic, strong) NSString *gs_Data;
 
 @end

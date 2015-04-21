@@ -13,7 +13,7 @@
 + (GSObjectMapping *)objectMapping {
     GSObjectMapping *mapping = [[GSObjectMapping alloc] initWithClass:[self class]];
     
-    [mapping addMappingsFromArray:@[@"name", @"state", @"age", @"siblings"]];
+    [mapping addMappingsFromArray:@[@"name", @"state", @"age", @"siblings", @"brother"]];
     [mapping setIdentifyingAttribute:@"name"];
     
     return mapping;
@@ -28,6 +28,8 @@
     obj.age = 31;
     
     obj.siblings = @[[GSFakeMappableObject mockObject2], [GSFakeMappableObject mockObject3], @35, @"yo dawg"];
+    
+    obj.brother = [GSFakeMappableObject mockObject2];
     
     return obj;
 }
@@ -46,7 +48,7 @@
 + (GSFakeMappableObject *)mockObject3 {
     GSFakeMappableObject *obj = [GSFakeMappableObject new];
     
-    obj.name = @"Jen";
+    obj.name = @"Emily";
     obj.state = @"VT";
     
     obj.age = 24;

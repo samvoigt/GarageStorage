@@ -17,10 +17,9 @@ static NSString *const kGSTypeKey = @"kGSTypeKey";
 
 @property (nonatomic, strong) NSMutableDictionary *objectMappings;
 
-@property (nonatomic, strong) NSMutableSet *mappableTypes;
-@property (nonatomic, strong) NSMutableSet *mappableRelationships;
-
 @property (nonatomic, strong) NSMutableArray *gsCoreDataObjects;
+
+@property (nonatomic, strong) NSMutableArray *fakeCoreDataStore;
 
 @end
 
@@ -30,15 +29,12 @@ static NSString *const kGSTypeKey = @"kGSTypeKey";
     self = [super init];
     if (self) {
         self.objectMappings = [NSMutableDictionary new];
+        self.fakeCoreDataStore = [NSMutableArray new];
     }
     return self;
 }
 
-- (void)registerMapping:(GSObjectMapping *)mapping {
-    
-    [self.objectMappings addEntriesFromDictionary:@{mapping.classNameForMapping : mapping}];
-    [self.mappableRelationships addObject:mapping.classNameForMapping];
-}
+#pragma mark - To Core Data Objects
 
 - (NSArray *)gsCoreDataObjectsFromObject:(id<GSMappableObject>)object {
    
@@ -61,8 +57,8 @@ static NSString *const kGSTypeKey = @"kGSTypeKey";
     NSDictionary *JSONDictionary = [self jsonDictionaryFromObject:object];
     
     GSFakeCoreDataObject *coreDataObject = [GSFakeCoreDataObject new];
-    coreDataObject.gs_data = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:JSONDictionary options:NSJSONWritingPrettyPrinted error:nil] encoding:NSUTF8StringEncoding];
-    coreDataObject.gs_type = mapping.classNameForMapping;
+    coreDataObject.gs_Data = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:JSONDictionary options:NSJSONWritingPrettyPrinted error:nil] encoding:NSUTF8StringEncoding];
+    coreDataObject.gs_Type = mapping.classNameForMapping;
     coreDataObject.gs_Identifier = [nakedObject valueForKey:mapping.identifyingAttribute];
 
     return coreDataObject;
@@ -87,7 +83,7 @@ static NSString *const kGSTypeKey = @"kGSTypeKey";
         else if ([obj conformsToProtocol:@protocol(GSMappableObject)]) {
             [JSONDictionary setObject:[self JSONPromiseForGSMappableObject:obj] forKey:propertyName];
         }
-        else {
+        else if (obj) {
             [JSONDictionary setObject:obj forKey:propertyName];
         }
     }
@@ -97,21 +93,21 @@ static NSString *const kGSTypeKey = @"kGSTypeKey";
 
 - (NSArray *)jsonArrayFromArray:(NSArray *)array {
     
-    NSMutableArray *JSONArray = [NSMutableArray new];
+    NSMutableArray *jsonArray = [NSMutableArray new];
     
     for (id object in array) {
         if ([object conformsToProtocol:@protocol(GSMappableObject)]) {
-            [JSONArray addObject:[self JSONPromiseForGSMappableObject:object]];
+            [jsonArray addObject:[self JSONPromiseForGSMappableObject:object]];
         }
         else if ([object isKindOfClass:[NSArray class]]) {
-            [JSONArray addObject:[self jsonArrayFromArray:object]];
+            [jsonArray addObject:[self jsonArrayFromArray:object]];
         }
         else {
-            [JSONArray addObject:object];
+            [jsonArray addObject:object];
         }
     }
     
-    return JSONArray;
+    return jsonArray;
 }
 
 - (NSDictionary *)JSONPromiseForGSMappableObject:(id<GSMappableObject>)object {
@@ -120,19 +116,72 @@ static NSString *const kGSTypeKey = @"kGSTypeKey";
     [self.gsCoreDataObjects addObject:coreDataObject];
     
     return @{kGSIdentifierKey : coreDataObject.gs_Identifier,
-                               kGSTypeKey : coreDataObject.gs_type};
+             kGSTypeKey : coreDataObject.gs_Type};
 }
 
-- (id<GSMappableObject>)objectFromGSCoreDataObject:(GSCoreDataObject *)gsCoreDataObject {
+
+#pragma mark - From Core Data Objects
+
+- (id<GSMappableObject>)objectFromGSCoreDataObject:(GSFakeCoreDataObject *)gsCoreDataObject {
+    
+    NSString *className = gsCoreDataObject.gs_Type;
+    NSData *jsonData = [gsCoreDataObject.gs_Data dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *jsonDictionary = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:nil];
+    
+    id gsObject = [NSClassFromString(className) new];
+    
+    GSObjectMapping *mapping = [NSClassFromString(className) objectMapping];
+    
+    for (NSString *keyPath in mapping.directKeyMappings) {
+        id jsonObject = jsonDictionary[keyPath];
+        if ([jsonObject isKindOfClass:[NSDictionary class]] && (NSDictionary *)jsonObject[kGSIdentifierKey]) {
+            GSFakeCoreDataObject *promisedObject = [self gsCoreDataObjectFromPromise:jsonObject];
+            [gsObject setValue:[self objectFromGSCoreDataObject:promisedObject] forKey:keyPath];
+        }
+        else if ([jsonObject isKindOfClass:[NSArray class]]) {
+            [gsObject setValue:[self gsObjectsArrayFromArray:jsonObject] forKey:keyPath];
+        }
+        else if (jsonObject) {
+            [gsObject setValue:jsonObject forKey:keyPath];
+        }
+    }
+    
+    return gsObject;
+}
+
+- (NSArray *)gsObjectsArrayFromArray:(NSArray *)array {
+    
+    NSMutableArray *objectsArray = [NSMutableArray new];
+    
+    for (id object in array) {
+        if ([object isKindOfClass:[NSDictionary class]] && (NSDictionary *)object[kGSIdentifierKey]) {
+            GSFakeCoreDataObject *promisedObject = [self gsCoreDataObjectFromPromise:object];
+            [objectsArray addObject:[self objectFromGSCoreDataObject:promisedObject]];
+        }
+        else if ([object isKindOfClass:[NSArray class]]) {
+            [objectsArray addObject:[self gsObjectsArrayFromArray:object]];
+        }
+        else {
+            [objectsArray addObject:object];
+        }
+    }
+    
+    return objectsArray;
+}
+
+- (GSFakeCoreDataObject *)gsCoreDataObjectFromPromise:(NSDictionary *)promise {
+    NSPredicate *promisePredicate = [NSPredicate predicateWithFormat:@"gs_Type = %@ && gs_Identifier = %@", promise[kGSTypeKey], promise[kGSIdentifierKey]];
+    
+    NSArray *matchingObject = [self.fakeCoreDataStore filteredArrayUsingPredicate:promisePredicate];
+    
+    if (matchingObject.count > 0) {
+        return matchingObject[0];
+    }
     return nil;
 }
 
-
-- (NSMutableSet *)mappableRelationships {
-    if (!_mappableRelationships) {
-        _mappableRelationships = [NSMutableSet new];
-    }
-    return _mappableRelationships;
+- (void)saveObjectsToCoreData:(NSArray *)objects {
+    [self.fakeCoreDataStore addObjectsFromArray:objects];
 }
 
 @end

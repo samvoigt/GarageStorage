@@ -30,9 +30,17 @@
     
     NSArray *array = [mapper gsCoreDataObjectsFromObject:sam];
     
+    [mapper saveObjectsToCoreData:array];
+    
     GSFakeCoreDataObject *obj = array[0];
     
-    NSLog(@"\nid: %@\ntype: %@\ndata: %@", obj.gs_Identifier, obj.gs_type, obj.gs_data);
+    NSLog(@"\nid: %@\ntype: %@\ndata: %@", obj.gs_Identifier, obj.gs_Type, obj.gs_Data);
+    NSLog(@"Pull it out of the store");
+    
+    GSFakeMappableObject *fakeSamuel = [mapper objectFromGSCoreDataObject:obj];
+    
+    NSLog(@"GS object: %@", fakeSamuel);
+
 }
 
 - (void)didReceiveMemoryWarning {

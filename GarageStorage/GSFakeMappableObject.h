@@ -17,6 +17,7 @@
 @property (nonatomic) NSInteger age;
 
 @property (nonatomic, strong) NSArray *siblings;
+@property (nonatomic, strong) GSFakeMappableObject *brother;
 
 + (GSFakeMappableObject *)mockObject;
 

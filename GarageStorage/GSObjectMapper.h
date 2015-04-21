@@ -14,9 +14,9 @@
 
 @interface GSObjectMapper : NSObject
 
-- (void)registerMapping:(GSObjectMapping *)mapping;
+- (void)saveObjectsToCoreData:(NSArray *)objects;
 
-- (id<GSMappableObject>)objectFromGSCoreDataObject:(GSCoreDataObject *)gsCoreDataObject;
+- (id<GSMappableObject>)objectFromGSCoreDataObject:(GSFakeCoreDataObject *)gsCoreDataObject;
 - (NSArray *)gsCoreDataObjectsFromObject:(id<GSMappableObject>)object;
 
 @end

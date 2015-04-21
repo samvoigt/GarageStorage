@@ -7,6 +7,12 @@
 //
 
 #import "ViewController.h"
+#import "GSObjectMapper.h"
+#import "GSCoreDataObject.h"
+#import "GSObjectMapping.h"
+
+#import "GSFakeMappableObject.h"
+#import "GSFakeCoreDataObject.h"
 
 @interface ViewController ()
 
@@ -17,6 +23,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    GSFakeMappableObject *sam = [GSFakeMappableObject mockObject];
+    
+    GSObjectMapper *mapper = [GSObjectMapper new];
+    
+    NSArray *array = [mapper gsCoreDataObjectsFromObject:sam];
+    
+    GSFakeCoreDataObject *obj = array[0];
+    
+    NSLog(@"\nid: %@\ntype: %@\ndata: %@", obj.gs_Identifier, obj.gs_type, obj.gs_data);
 }
 
 - (void)didReceiveMemoryWarning {

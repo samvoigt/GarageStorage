@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="Test1.xcdatamodel" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <elements/>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14D136" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="GSCoreDataObject" representedClassName="GSCoreDataObject" syncable="YES">
+        <attribute name="gs_data" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gs_Identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gs_type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gs_version" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="GSCoreDataObject" positionX="-63" positionY="-18" width="128" height="105"/>
+    </elements>
 </model>

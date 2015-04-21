@@ -15,6 +15,11 @@
 		221C9AF21AE595030036C692 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 221C9AF11AE595030036C692 /* Images.xcassets */; };
 		221C9AF51AE595030036C692 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 221C9AF31AE595030036C692 /* LaunchScreen.xib */; };
 		221C9B011AE595030036C692 /* GarageStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9B001AE595030036C692 /* GarageStorageTests.m */; };
+		221C9B0C1AE5955B0036C692 /* GSObjectMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9B0B1AE5955B0036C692 /* GSObjectMapping.m */; };
+		221C9B0F1AE59D010036C692 /* GSObjectMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9B0E1AE59D010036C692 /* GSObjectMapper.m */; };
+		221C9B181AE5A2F40036C692 /* GSCoreDataObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9B171AE5A2F40036C692 /* GSCoreDataObject.m */; };
+		221C9B1B1AE5E78A0036C692 /* GSFakeCoreDataObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9B1A1AE5E78A0036C692 /* GSFakeCoreDataObject.m */; };
+		221C9B1E1AE691410036C692 /* GSFakeMappableObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9B1D1AE691410036C692 /* GSFakeMappableObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,18 +35,28 @@
 /* Begin PBXFileReference section */
 		221C9ADE1AE595030036C692 /* GarageStorage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GarageStorage.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		221C9AE21AE595030036C692 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		221C9AE31AE595030036C692 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		221C9AE51AE595030036C692 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		221C9AE61AE595030036C692 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		221C9AE31AE595030036C692 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		221C9AE51AE595030036C692 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AppDelegate.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		221C9AE61AE595030036C692 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		221C9AE91AE595030036C692 /* GarageStorage.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = GarageStorage.xcdatamodel; sourceTree = "<group>"; };
 		221C9AEB1AE595030036C692 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		221C9AEC1AE595030036C692 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		221C9AEC1AE595030036C692 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		221C9AEF1AE595030036C692 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		221C9AF11AE595030036C692 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		221C9AF41AE595030036C692 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		221C9AFA1AE595030036C692 /* GarageStorageTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GarageStorageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		221C9AFF1AE595030036C692 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		221C9B001AE595030036C692 /* GarageStorageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GarageStorageTests.m; sourceTree = "<group>"; };
+		221C9B0A1AE5955B0036C692 /* GSObjectMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GSObjectMapping.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		221C9B0B1AE5955B0036C692 /* GSObjectMapping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = GSObjectMapping.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		221C9B0D1AE59D010036C692 /* GSObjectMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GSObjectMapper.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		221C9B0E1AE59D010036C692 /* GSObjectMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = GSObjectMapper.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		221C9B161AE5A2F40036C692 /* GSCoreDataObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GSCoreDataObject.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		221C9B171AE5A2F40036C692 /* GSCoreDataObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GSCoreDataObject.m; sourceTree = "<group>"; };
+		221C9B191AE5E78A0036C692 /* GSFakeCoreDataObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GSFakeCoreDataObject.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		221C9B1A1AE5E78A0036C692 /* GSFakeCoreDataObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GSFakeCoreDataObject.m; sourceTree = "<group>"; };
+		221C9B1C1AE691410036C692 /* GSFakeMappableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GSFakeMappableObject.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		221C9B1D1AE691410036C692 /* GSFakeMappableObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = GSFakeMappableObject.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +107,16 @@
 				221C9AF31AE595030036C692 /* LaunchScreen.xib */,
 				221C9AE81AE595030036C692 /* GarageStorage.xcdatamodeld */,
 				221C9AE11AE595030036C692 /* Supporting Files */,
+				221C9B0A1AE5955B0036C692 /* GSObjectMapping.h */,
+				221C9B0B1AE5955B0036C692 /* GSObjectMapping.m */,
+				221C9B0D1AE59D010036C692 /* GSObjectMapper.h */,
+				221C9B0E1AE59D010036C692 /* GSObjectMapper.m */,
+				221C9B161AE5A2F40036C692 /* GSCoreDataObject.h */,
+				221C9B171AE5A2F40036C692 /* GSCoreDataObject.m */,
+				221C9B191AE5E78A0036C692 /* GSFakeCoreDataObject.h */,
+				221C9B1A1AE5E78A0036C692 /* GSFakeCoreDataObject.m */,
+				221C9B1C1AE691410036C692 /* GSFakeMappableObject.h */,
+				221C9B1D1AE691410036C692 /* GSFakeMappableObject.m */,
 			);
 			path = GarageStorage;
 			sourceTree = "<group>";
@@ -166,6 +191,7 @@
 		221C9AD61AE595030036C692 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = GS;
 				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = Wellframe;
 				TargetAttributes = {
@@ -223,9 +249,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				221C9AE71AE595030036C692 /* AppDelegate.m in Sources */,
+				221C9B181AE5A2F40036C692 /* GSCoreDataObject.m in Sources */,
 				221C9AEA1AE595030036C692 /* GarageStorage.xcdatamodeld in Sources */,
 				221C9AED1AE595030036C692 /* ViewController.m in Sources */,
+				221C9B1E1AE691410036C692 /* GSFakeMappableObject.m in Sources */,
+				221C9B1B1AE5E78A0036C692 /* GSFakeCoreDataObject.m in Sources */,
 				221C9AE41AE595030036C692 /* main.m in Sources */,
+				221C9B0C1AE5955B0036C692 /* GSObjectMapping.m in Sources */,
+				221C9B0F1AE59D010036C692 /* GSObjectMapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

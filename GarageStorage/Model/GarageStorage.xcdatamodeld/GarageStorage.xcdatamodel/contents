@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14D136" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="GSCoreDataObject" representedClassName="GSCoreDataObject" syncable="YES">
+        <attribute name="gs_creationDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="gs_data" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="gs_Identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gs_identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gs_modifiedDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="gs_type" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="gs_version" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
     </entity>
     <elements>
-        <element name="GSCoreDataObject" positionX="-63" positionY="-18" width="128" height="105"/>
+        <element name="GSCoreDataObject" positionX="-63" positionY="-18" width="128" height="135"/>
     </elements>
 </model>

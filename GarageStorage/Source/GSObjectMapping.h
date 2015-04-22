@@ -10,11 +10,7 @@
 
 @class GSObjectMapping;
 
-@protocol GSMappableObject <NSObject>
 
-+ (GSObjectMapping *)objectMapping;
-
-@end
 
 @interface GSObjectMapping : NSObject
 

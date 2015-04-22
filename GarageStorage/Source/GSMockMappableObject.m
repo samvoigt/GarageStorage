@@ -1,14 +1,14 @@
 //
-//  GSFakeMappableObject.m
+//  GSMockMappableObject.m
 //  GarageStorage
 //
 //  Created by Sam Voigt on 4/21/15.
 //  Copyright (c) 2015 Wellframe. All rights reserved.
 //
 
-#import "GSFakeMappableObject.h"
+#import "GSMockMappableObject.h"
 
-@implementation GSFakeMappableObject
+@implementation GSMockMappableObject
 
 + (GSObjectMapping *)objectMapping {
     GSObjectMapping *mapping = [[GSObjectMapping alloc] initWithClass:[self class]];
@@ -19,23 +19,23 @@
     return mapping;
 }
 
-+ (GSFakeMappableObject *)mockObject {
-    GSFakeMappableObject *obj = [GSFakeMappableObject new];
++ (GSMockMappableObject *)mockObject {
+    GSMockMappableObject *obj = [GSMockMappableObject new];
     
     obj.name = @"Sam";
     obj.state = @"MA";
     
     obj.age = 31;
     
-    obj.siblings = @[[GSFakeMappableObject mockObject2], [GSFakeMappableObject mockObject3], @35, @"yo dawg"];
+    obj.siblings = @[[GSMockMappableObject mockObject2], [GSMockMappableObject mockObject3], @35, @"yo dawg"];
     
-    obj.brother = [GSFakeMappableObject mockObject2];
+    obj.brother = [GSMockMappableObject mockObject2];
     
     return obj;
 }
 
-+ (GSFakeMappableObject *)mockObject2 {
-    GSFakeMappableObject *obj = [GSFakeMappableObject new];
++ (GSMockMappableObject *)mockObject2 {
+    GSMockMappableObject *obj = [GSMockMappableObject new];
     
     obj.name = @"Nick";
     obj.state = @"CT";
@@ -45,8 +45,8 @@
     return obj;
 }
 
-+ (GSFakeMappableObject *)mockObject3 {
-    GSFakeMappableObject *obj = [GSFakeMappableObject new];
++ (GSMockMappableObject *)mockObject3 {
+    GSMockMappableObject *obj = [GSMockMappableObject new];
     
     obj.name = @"Emily";
     obj.state = @"VT";

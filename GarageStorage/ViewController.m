@@ -7,12 +7,10 @@
 //
 
 #import "ViewController.h"
-#import "GSObjectMapper.h"
-#import "GSCoreDataObject.h"
-#import "GSObjectMapping.h"
+#import "GSGarageStorage.h"
 
-#import "GSFakeMappableObject.h"
-#import "GSFakeCoreDataObject.h"
+
+#import "GSMockMappableObject.h"
 
 @interface ViewController ()
 
@@ -24,22 +22,36 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    GSFakeMappableObject *sam = [GSFakeMappableObject mockObject];
+    GSMockMappableObject *sam = [GSMockMappableObject mockObject];
     
-    GSObjectMapper *mapper = [GSObjectMapper new];
+    GSGarage *garage = [[GSGarage alloc] init];
+   
+   // [garage deleteAllObjectsFromGarage];
     
-    NSArray *array = [mapper gsCoreDataObjectsFromObject:sam];
+   // [garage saveGarage];
     
-    [mapper saveObjectsToCoreData:array];
+    [garage parkObjectInGarage:sam];
     
-    GSFakeCoreDataObject *obj = array[0];
+   // [garage saveGarage];
     
-    NSLog(@"\nid: %@\ntype: %@\ndata: %@", obj.gs_Identifier, obj.gs_Type, obj.gs_Data);
-    NSLog(@"Pull it out of the store");
+    sam = nil;
     
-    GSFakeMappableObject *fakeSamuel = [mapper objectFromGSCoreDataObject:obj];
+    sam = [garage retrieveObjectOfClass:[GSMockMappableObject class] identifier:@"Sam"];
     
-    NSLog(@"GS object: %@", fakeSamuel);
+    
+    NSLog(@"Sam: %@", sam);
+    //NSArray *array = [mapper gsCoreDataObjectsFromObject:sam];
+    
+    //[mapper saveObjectsToCoreData:array];
+    
+    //GSFakeCoreDataObject *obj = array[0];
+    
+//    NSLog(@"\nid: %@\ntype: %@\ndata: %@", obj.gs_identifier, obj.gs_type, obj.gs_data);
+//    NSLog(@"Pull it out of the store");
+//    
+//    GSMockMappableObject *fakeSamuel = [mapper objectFromGSCoreDataObject:obj];
+//    
+//    NSLog(@"GS object: %@", fakeSamuel);
 
 }
 

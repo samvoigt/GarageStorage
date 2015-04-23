@@ -23,10 +23,10 @@ static NSString *const kMappingKey = @"kMappingKey";
 
 @implementation GSObjectMapping
 
-- (instancetype)initWithClass:(Class)mappableClass {
+- (instancetype)initWithClass:(Class)cls {
     self = [super init];
     if (self) {
-        self.classNameForMapping = NSStringFromClass(mappableClass);
+        self.classNameForMapping = NSStringFromClass(cls);
         self.directKeyMappings = [NSMutableDictionary new];
         self.relationshipMappings = [NSMutableDictionary new];
     }

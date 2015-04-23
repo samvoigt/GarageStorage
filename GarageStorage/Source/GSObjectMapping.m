@@ -14,7 +14,6 @@ static NSString *const kMappingKey = @"kMappingKey";
 @interface GSObjectMapping ()
 
 @property (nonatomic, readwrite) NSString *classNameForMapping;
-@property (nonatomic, readwrite) NSString *identifyingAttribute;
 
 @property (strong, nonatomic, readwrite) NSMutableDictionary *mappings;
 

@@ -11,7 +11,8 @@
 @interface GSObjectMapping : NSObject
 
 @property (nonatomic, readonly) NSString *classNameForMapping;
-@property (nonatomic, readonly) NSString *identifyingAttribute;
+@property (nonatomic, strong) NSString *identifyingAttribute;
+@property (nonatomic) NSInteger version;
 
 @property (nonatomic, readonly) NSMutableDictionary *mappings;
 
@@ -46,12 +47,5 @@
  *  @param dictionary A dictionary of mappings
  */
 - (void)addMappingsFromDictionary:(NSDictionary *)dictionary;
-
-/**
- *  Sets the identifying attribute for a class. This function should only be called once the mappings have been added.
- *
- *  @param identifyingAttribute The name of the property to use as the identifying attribute.
- */
-- (void)setIdentifyingAttribute:(NSString *)identifyingAttribute;
 
 @end

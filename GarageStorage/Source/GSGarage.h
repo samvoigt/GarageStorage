@@ -9,7 +9,18 @@
 #import <Foundation/Foundation.h>
 #import "GarageStorage.h"
 
+@class NSPersistentStoreCoordinator;
+
 @interface GSGarage : NSObject
+
+/**
+ *  Creates a Garage with a peristent store coordinator provided by the user.
+ *
+ *  @param persistentStoreCoordinator An NSPersistentStoreCoordinator to use in the Garage's Core Data Stack
+ *
+ *  @return A GSGarage
+ */
+- (instancetype)initWithPersistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator;
 
 /**
  *  Add an object to the Garage. This will not save the object in a persistent store.

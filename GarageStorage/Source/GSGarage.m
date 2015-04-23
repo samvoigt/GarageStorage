@@ -22,11 +22,18 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
 
 @implementation GSGarage
 
+#pragma mark - Initializers
+
 - (instancetype)init {
+    
+    return [self initWithPersistentStoreCoordinator:nil];
+}
+
+- (instancetype)initWithPersistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator {
     
     self = [super init];
     if (self) {
-        self.coreDataStack = [GSCoreDataStack new];
+        self.coreDataStack = [[GSCoreDataStack alloc] initWithPersistentStoreCoordinator:persistentStoreCoordinator];
         self.objectMapper = [GSObjectMapper new];
         self.objectMapper.delegate = self;
     }
@@ -105,9 +112,9 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
 
 - (GSCoreDataObject *)gsCoreDataObjectForObject:(id<GSMappableObject>)object createIfNeeded:(BOOL)createIfNeeded {
     
-    id nakedObject = object;
     GSObjectMapping *mapping = [[object class] objectMapping];
     NSString *type = mapping.classNameForMapping;
+    id nakedObject = object;
     NSString *identifier = [nakedObject valueForKey:mapping.identifyingAttribute];
     
     GSCoreDataObject *coreDataObject = [self fetchObjectWithType:type identifier:identifier];
@@ -120,6 +127,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
         coreDataObject.gs_type = type;
         coreDataObject.gs_identifier = identifier;
         coreDataObject.gs_creationDate = [NSDate date];
+        coreDataObject.gs_version = @(mapping.version);
         
         return coreDataObject;
     }

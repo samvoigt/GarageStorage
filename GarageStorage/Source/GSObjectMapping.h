@@ -8,24 +8,50 @@
 
 #import <Foundation/Foundation.h>
 
-@class GSObjectMapping;
-
-
-
 @interface GSObjectMapping : NSObject
 
 @property (nonatomic, readonly) NSString *classNameForMapping;
 @property (nonatomic, readonly) NSString *identifyingAttribute;
 
-@property (nonatomic, readonly) NSMutableDictionary *directKeyMappings;
-@property (nonatomic, readonly) NSMutableDictionary *relationshipMappings;
+@property (nonatomic, readonly) NSMutableDictionary *mappings;
 
+/**
+ *  Returns a mapping for a given class. This is the preferred way to get a "blank" mapping.
+ *
+ *  @param cls A mappable class
+ *
+ *  @return A GSObjectMapping
+ */
++ (instancetype)mappingForClass:(Class)cls;
 
-- (instancetype)initWithClass:(Class)mappableClass;
+/**
+ *  Initializes a mapping with a given class
+ *
+ *  @param cls A mappable class
+ *
+ *  @return A GSObjectMapping
+ */
+- (instancetype)initWithClass:(Class)cls;
 
-- (void)setIdentifyingAttribute:(NSString *)identifyingAttribute;
+/**
+ *  Adds mappings from an array. The mappings are the names of the properties you wish to map on the object. When in doubt, map using this method.
+ *
+ *  @param array An array of NSStrings.
+ */
 - (void)addMappingsFromArray:(NSArray *)array;
+
+/**
+ *  Adds mappings from a dictionary. The keys in the dictionary are the names of the properties you wish to map on your object. The values are the JSON keys in the underlying GSCoreDataObject they map to.
+ *
+ *  @param dictionary A dictionary of mappings
+ */
 - (void)addMappingsFromDictionary:(NSDictionary *)dictionary;
-- (void)addRelationshipMappingFromKeypath:(NSString *)fromKeypath toKeypath:(NSString *)toKeypath withMapping:(GSObjectMapping *)mapping;
+
+/**
+ *  Sets the identifying attribute for a class. This function should only be called once the mappings have been added.
+ *
+ *  @param identifyingAttribute The name of the property to use as the identifying attribute.
+ */
+- (void)setIdentifyingAttribute:(NSString *)identifyingAttribute;
 
 @end

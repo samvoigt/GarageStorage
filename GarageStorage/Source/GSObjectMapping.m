@@ -16,19 +16,21 @@ static NSString *const kMappingKey = @"kMappingKey";
 @property (nonatomic, readwrite) NSString *classNameForMapping;
 @property (nonatomic, readwrite) NSString *identifyingAttribute;
 
-@property (strong, nonatomic, readwrite) NSMutableDictionary *directKeyMappings;
-@property (strong, nonatomic, readwrite) NSMutableDictionary *relationshipMappings;
+@property (strong, nonatomic, readwrite) NSMutableDictionary *mappings;
 
 @end
 
 @implementation GSObjectMapping
 
++ (instancetype)mappingForClass:(Class)cls {
+    return [[GSObjectMapping alloc] initWithClass:cls];
+}
+
 - (instancetype)initWithClass:(Class)cls {
     self = [super init];
     if (self) {
         self.classNameForMapping = NSStringFromClass(cls);
-        self.directKeyMappings = [NSMutableDictionary new];
-        self.relationshipMappings = [NSMutableDictionary new];
+        self.mappings = [NSMutableDictionary new];
     }
     return self;
 }
@@ -43,19 +45,11 @@ static NSString *const kMappingKey = @"kMappingKey";
 }
 
 - (void)addMappingsFromDictionary:(NSDictionary *)dictionary {
-    [self.directKeyMappings addEntriesFromDictionary:dictionary];
-}
-
-- (void)addRelationshipMappingFromKeypath:(NSString *)fromKeypath toKeypath:(NSString *)toKeypath withMapping:(GSObjectMapping *)mapping {
-    [self.relationshipMappings addEntriesFromDictionary:@{fromKeypath :
-                                                              @{kDestinationKeyPathKey : toKeypath,
-                                                                kMappingKey : mapping}
-                                                          }];
-    
+    [self.mappings addEntriesFromDictionary:dictionary];
 }
 
 -(void)setIdentifyingAttribute:(NSString *)identifyingAttribute {
-    if (self.directKeyMappings[identifyingAttribute] != nil) {
+    if (self.mappings[identifyingAttribute] != nil) {
         _identifyingAttribute = identifyingAttribute;
     }
     else {

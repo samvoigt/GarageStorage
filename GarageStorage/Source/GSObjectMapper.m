@@ -7,22 +7,12 @@
 //
 
 #import "GSObjectMapper.h"
-#import "objc/runtime.h"
+NSString *const kGSTypeKey = @"gs_type";
+NSString *const kGSIdentifierKey = @"gs_identifier";
 
 @implementation GSObjectMapper
 
 #pragma mark - To Core Data Objects
-
-//- (GSCoreDataObject *)gsCoreDataObjectFromObject:(id<GSMappableObject>)object {
-//    
-//    NSDictionary *JSONDictionary = [self jsonDictionaryFromObject:object];
-//    
-//    GSCoreDataObject *coreDataObject = [self.delegate gsCoreDataObjectForObject:object];
-//    coreDataObject.gs_data = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:JSONDictionary options:NSJSONWritingPrettyPrinted error:nil] encoding:NSUTF8StringEncoding];
-//    coreDataObject.gs_modifiedDate = [NSDate date];
-//
-//    return coreDataObject;
-//}
 
 - (void)mapGSMappableObjectToGSCoreDataObject:(id<GSMappableObject>)object {
     
@@ -42,23 +32,23 @@
     
     GSObjectMapping *mapping = [[object class] objectMapping];
     
-    for (NSString *propertyName in [mapping.directKeyMappings allKeys]) {
+    for (NSString *propertyName in [mapping.mappings allKeys]) {
+        NSString *jsonKey = mapping.mappings[propertyName];
         id obj = [nakedObject valueForKey:propertyName];
         
         if ([obj isKindOfClass:[NSArray class]]) {
-            [jsonDictionary setValue:[self jsonArrayFromArray:obj] forKey:propertyName];
+            [jsonDictionary setValue:[self jsonArrayFromArray:obj] forKey:jsonKey];
         }
         else if ([obj conformsToProtocol:@protocol(GSMappableObject)]) {
             NSDictionary *promise = [self jsonPromiseForGSMappableObject:obj];
             if (promise) {
-                [jsonDictionary setObject:promise forKey:propertyName];
+                [jsonDictionary setObject:promise forKey:jsonKey];
             }
         }
         else if (obj) {
-            [jsonDictionary setObject:obj forKey:propertyName];
+            [jsonDictionary setObject:obj forKey:jsonKey];
         }
     }
-
     return jsonDictionary;
 }
 
@@ -80,7 +70,6 @@
             [jsonArray addObject:object];
         }
     }
-    
     return jsonArray;
 }
 
@@ -99,7 +88,6 @@
     }
 }
 
-
 #pragma mark - From Core Data Objects
 
 - (id<GSMappableObject>)mapGSCoreDataObjectToGSMappableObject:(GSCoreDataObject *)gsCoreDataObject {
@@ -112,8 +100,9 @@
     
     GSObjectMapping *mapping = [NSClassFromString(className) objectMapping];
     
-    for (NSString *keyPath in mapping.directKeyMappings) {
-        id jsonObject = jsonDictionary[keyPath];
+    for (NSString *keyPath in mapping.mappings) {
+        NSString *jsonKey = mapping.mappings[keyPath];
+        id jsonObject = jsonDictionary[jsonKey];
         if ([jsonObject isKindOfClass:[NSDictionary class]] && (NSDictionary *)jsonObject[kGSIdentifierKey]) {
             GSCoreDataObject *promisedObject = [self.delegate fetchGSCoreDataObjectForPromise:jsonObject];
             [gsObject setValue:[self mapGSCoreDataObjectToGSMappableObject:promisedObject] forKey:keyPath];

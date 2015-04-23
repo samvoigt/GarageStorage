@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		22155DD21AE81E3D006305E2 /* GSCoreDataObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 22155DD11AE81E3D006305E2 /* GSCoreDataObject.m */; };
+		22155DD51AE934D0006305E2 /* MockPersonObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 22155DD41AE934D0006305E2 /* MockPersonObject.m */; };
 		221C9AE41AE595030036C692 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9AE31AE595030036C692 /* main.m */; };
 		221C9AE71AE595030036C692 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9AE61AE595030036C692 /* AppDelegate.m */; };
 		221C9AED1AE595030036C692 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9AEC1AE595030036C692 /* ViewController.m */; };
@@ -16,7 +17,6 @@
 		221C9AF51AE595030036C692 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 221C9AF31AE595030036C692 /* LaunchScreen.xib */; };
 		221C9B011AE595030036C692 /* GarageStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9B001AE595030036C692 /* GarageStorageTests.m */; };
 		221C9B211AE7E76B0036C692 /* GSCoreDataStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9B201AE7E76B0036C692 /* GSCoreDataStack.m */; };
-		221C9B2E1AE7EF570036C692 /* GSMockMappableObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9B271AE7EF570036C692 /* GSMockMappableObject.m */; };
 		221C9B2F1AE7EF570036C692 /* GSObjectMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9B291AE7EF570036C692 /* GSObjectMapper.m */; };
 		221C9B301AE7EF570036C692 /* GSObjectMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 221C9B2B1AE7EF570036C692 /* GSObjectMapping.m */; };
 		221C9B351AE7EFAA0036C692 /* GarageStorage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 221C9B331AE7EFAA0036C692 /* GarageStorage.xcdatamodeld */; };
@@ -36,6 +36,9 @@
 /* Begin PBXFileReference section */
 		22155DD01AE81E3D006305E2 /* GSCoreDataObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GSCoreDataObject.h; path = Model/GSCoreDataObject.h; sourceTree = "<group>"; };
 		22155DD11AE81E3D006305E2 /* GSCoreDataObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GSCoreDataObject.m; path = Model/GSCoreDataObject.m; sourceTree = "<group>"; };
+		22155DD31AE934D0006305E2 /* MockPersonObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPersonObject.h; sourceTree = "<group>"; };
+		22155DD41AE934D0006305E2 /* MockPersonObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockPersonObject.m; sourceTree = "<group>"; };
+		22155DD61AE93E7D006305E2 /* GSMappableObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GSMappableObject.h; path = Source/GSMappableObject.h; sourceTree = "<group>"; };
 		221C9ADE1AE595030036C692 /* GarageStorage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GarageStorage.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		221C9AE21AE595030036C692 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		221C9AE31AE595030036C692 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -51,8 +54,6 @@
 		221C9B001AE595030036C692 /* GarageStorageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GarageStorageTests.m; sourceTree = "<group>"; };
 		221C9B1F1AE7E76B0036C692 /* GSCoreDataStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GSCoreDataStack.h; path = Source/GSCoreDataStack.h; sourceTree = "<group>"; };
 		221C9B201AE7E76B0036C692 /* GSCoreDataStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GSCoreDataStack.m; path = Source/GSCoreDataStack.m; sourceTree = "<group>"; };
-		221C9B261AE7EF570036C692 /* GSMockMappableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GSMockMappableObject.h; path = Source/GSMockMappableObject.h; sourceTree = "<group>"; };
-		221C9B271AE7EF570036C692 /* GSMockMappableObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GSMockMappableObject.m; path = Source/GSMockMappableObject.m; sourceTree = "<group>"; };
 		221C9B281AE7EF570036C692 /* GSObjectMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GSObjectMapper.h; path = Source/GSObjectMapper.h; sourceTree = "<group>"; };
 		221C9B291AE7EF570036C692 /* GSObjectMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GSObjectMapper.m; path = Source/GSObjectMapper.m; sourceTree = "<group>"; };
 		221C9B2A1AE7EF570036C692 /* GSObjectMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GSObjectMapping.h; path = Source/GSObjectMapping.h; sourceTree = "<group>"; };
@@ -60,7 +61,7 @@
 		221C9B341AE7EFAA0036C692 /* GarageStorage.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = GarageStorage.xcdatamodel; sourceTree = "<group>"; };
 		221C9B361AE7EFF70036C692 /* GSGarage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GSGarage.h; path = Source/GSGarage.h; sourceTree = "<group>"; };
 		221C9B371AE7EFF70036C692 /* GSGarage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GSGarage.m; path = Source/GSGarage.m; sourceTree = "<group>"; };
-		221C9B391AE7F4C80036C692 /* GSGarageStorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GSGarageStorage.h; path = Source/GSGarageStorage.h; sourceTree = "<group>"; };
+		221C9B391AE7F4C80036C692 /* GarageStorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GarageStorage.h; path = Source/GarageStorage.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +109,8 @@
 				221C9AE61AE595030036C692 /* AppDelegate.m */,
 				221C9AEB1AE595030036C692 /* ViewController.h */,
 				221C9AEC1AE595030036C692 /* ViewController.m */,
+				22155DD31AE934D0006305E2 /* MockPersonObject.h */,
+				22155DD41AE934D0006305E2 /* MockPersonObject.m */,
 				221C9AEE1AE595030036C692 /* Main.storyboard */,
 				221C9AF11AE595030036C692 /* Images.xcassets */,
 				221C9AF31AE595030036C692 /* LaunchScreen.xib */,
@@ -145,8 +148,6 @@
 		221C9B311AE7EF7E0036C692 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				221C9B261AE7EF570036C692 /* GSMockMappableObject.h */,
-				221C9B271AE7EF570036C692 /* GSMockMappableObject.m */,
 				221C9B281AE7EF570036C692 /* GSObjectMapper.h */,
 				221C9B291AE7EF570036C692 /* GSObjectMapper.m */,
 				221C9B2A1AE7EF570036C692 /* GSObjectMapping.h */,
@@ -155,7 +156,8 @@
 				221C9B201AE7E76B0036C692 /* GSCoreDataStack.m */,
 				221C9B361AE7EFF70036C692 /* GSGarage.h */,
 				221C9B371AE7EFF70036C692 /* GSGarage.m */,
-				221C9B391AE7F4C80036C692 /* GSGarageStorage.h */,
+				22155DD61AE93E7D006305E2 /* GSMappableObject.h */,
+				221C9B391AE7F4C80036C692 /* GarageStorage.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -271,9 +273,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22155DD51AE934D0006305E2 /* MockPersonObject.m in Sources */,
 				221C9AE71AE595030036C692 /* AppDelegate.m in Sources */,
 				221C9AED1AE595030036C692 /* ViewController.m in Sources */,
-				221C9B2E1AE7EF570036C692 /* GSMockMappableObject.m in Sources */,
 				221C9B381AE7EFF70036C692 /* GSGarage.m in Sources */,
 				221C9B351AE7EFAA0036C692 /* GarageStorage.xcdatamodeld in Sources */,
 				221C9B2F1AE7EF570036C692 /* GSObjectMapper.m in Sources */,

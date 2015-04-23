@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "GSGarageStorage.h"
+#import "GarageStorage.h"
 
 @interface GSGarage : NSObject
 

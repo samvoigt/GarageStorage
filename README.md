@@ -19,10 +19,10 @@ An object mapping specifies the properties on the object you wish to have parked
 
 @end
 ```
-You can get a base mapping for a class with: `[GSObjectMapping alloc] initWithClass:[yourClass class]]` The mapping for the Person object might look like:
+You can get a base mapping for a class with: `[GSObjectMapping mappingForClass:[yourClass class]]` The mapping for the Person object might look like:
 ``` 
 + (GSObjectMapping *)objectMapping {
-    GSObjectMapping *mapping = [[GSObjectMapping alloc] initWithClass:[self class]];
+    GSObjectMapping *mapping = [GSObjectMapping mappingForClass:[self class]];
     
     [mapping addMappingsFromArray:@[@"name", @"ssn"]];
     [mapping setIdentifyingAttribute:@"ssn"];
@@ -30,7 +30,7 @@ You can get a base mapping for a class with: `[GSObjectMapping alloc] initWithCl
     return mapping;
 }
 ```
-You must set the identifying attribute, or else your objects will not be parked. Under the hood, your object gets serialized to JSON, so for now, don't try to park any tricky properties. Strings, numbers (both NSNumbers and primitives), dictionaries where keys and values are Strings or NSNumbers, GSMappableObjects, and arrays of arbitrary GSMappableObjects/the other types listed here, all those should be fine.
+Once you have set the properties to map, you must set the identifying attribute, or else your objects will not be parked. Under the hood, your object gets serialized to JSON, so for now, don't try to park any tricky properties. Strings, numbers (both NSNumbers and primitives), dictionaries where keys and values are Strings or NSNumbers, GSMappableObjects, and arrays of arbitrary GSMappableObjects/the other types listed here, all those should be fine.
 
 #### Parking/Retrieving/Deleting GSMappableObjects In The Garage
 To park (store) a GSMappableObject in the garage, you call `- (void)parkObjectInGarage:(id<GSMappableObject>)object`. This will add the object to the Garage, but it will not save the Garage to the persistent store. To do that, you must call `- (void)saveGarage`. 
@@ -38,6 +38,3 @@ To park (store) a GSMappableObject in the garage, you call `- (void)parkObjectIn
 To retrieve an object from the Garage, you can either fetch all the objects of a given class with `- (NSArray *)retrieveAllObjectsOfClass:(Class)cls`, or you can fetch an object of a given class and a given identifier with: `- (id<GSMappableObject>)retrieveObjectOfClass:(Class)cls identifier:(NSString *)identifier`.
 
 To delete an object from the Garage, use: ` - (void)deleteObjectFromGarage:(id<GSMappableObject>)object`. To delete all the objects in a Garage, use `- (void)deleteAllObjectsFromGarage`. As with parking objects, deletes are not persisted to disk until you call `- (void)saveGarage`.
-
-#### Notes
-That's pretty much it for now. Park things, save the Garage, and you're good to go.

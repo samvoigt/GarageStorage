@@ -7,10 +7,9 @@
 //
 
 #import "ViewController.h"
-#import "GSGarageStorage.h"
+#import "GarageStorage.h"
 
-
-#import "GSMockMappableObject.h"
+#import "MockPersonObject.h"
 
 @interface ViewController ()
 
@@ -20,44 +19,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
     
-    GSMockMappableObject *sam = [GSMockMappableObject mockObject];
+    MockPersonObject *sam = [MockPersonObject mockObject];
     
     GSGarage *garage = [[GSGarage alloc] init];
    
-   // [garage deleteAllObjectsFromGarage];
-    
-   // [garage saveGarage];
-    
     [garage parkObjectInGarage:sam];
-    
-   // [garage saveGarage];
     
     sam = nil;
     
-    sam = [garage retrieveObjectOfClass:[GSMockMappableObject class] identifier:@"Sam"];
-    
+    sam = [garage retrieveObjectOfClass:[MockPersonObject class] identifier:@"Sam"];
     
     NSLog(@"Sam: %@", sam);
-    //NSArray *array = [mapper gsCoreDataObjectsFromObject:sam];
-    
-    //[mapper saveObjectsToCoreData:array];
-    
-    //GSFakeCoreDataObject *obj = array[0];
-    
-//    NSLog(@"\nid: %@\ntype: %@\ndata: %@", obj.gs_identifier, obj.gs_type, obj.gs_data);
-//    NSLog(@"Pull it out of the store");
-//    
-//    GSMockMappableObject *fakeSamuel = [mapper objectFromGSCoreDataObject:obj];
-//    
-//    NSLog(@"GS object: %@", fakeSamuel);
-
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 @end

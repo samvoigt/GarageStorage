@@ -12,8 +12,6 @@
 #import "GSCoreDataObject.h"
 
 static NSString *const kGSEntityName = @"GSCoreDataObject";
-NSString *const kGSTypeKey = @"gs_type";
-NSString *const kGSIdentifierKey = @"gs_identifier";
 
 @interface GSGarage () <GSObjectMapperDataSource>
 
@@ -36,6 +34,7 @@ NSString *const kGSIdentifierKey = @"gs_identifier";
 }
 
 - (void)parkObjectInGarage:(id<GSMappableObject>)object {
+   
     [self.objectMapper mapGSMappableObjectToGSCoreDataObject:object];
 }
 
@@ -85,7 +84,46 @@ NSString *const kGSIdentifierKey = @"gs_identifier";
     [self.coreDataStack saveContext];
 }
 
+#pragma mark - GSManagedObjectDatasource
+
+- (GSCoreDataObject *)newGSCoreDataObjectForObject:(id<GSMappableObject>)object {
+    
+    return [self gsCoreDataObjectForObject:object createIfNeeded:YES];
+}
+
+- (GSCoreDataObject *)fetchGSCoreDataObjectForObject:(id<GSMappableObject>)object {
+    
+    return [self gsCoreDataObjectForObject:object createIfNeeded:NO];
+}
+
+- (GSCoreDataObject *)fetchGSCoreDataObjectForPromise:(NSDictionary *)promise {
+    
+    return [self fetchObjectWithType:promise[kGSTypeKey] identifier:promise[kGSIdentifierKey]];
+}
+
 #pragma mark - Helper Methods
+
+- (GSCoreDataObject *)gsCoreDataObjectForObject:(id<GSMappableObject>)object createIfNeeded:(BOOL)createIfNeeded {
+    
+    id nakedObject = object;
+    GSObjectMapping *mapping = [[object class] objectMapping];
+    NSString *type = mapping.classNameForMapping;
+    NSString *identifier = [nakedObject valueForKey:mapping.identifyingAttribute];
+    
+    GSCoreDataObject *coreDataObject = [self fetchObjectWithType:type identifier:identifier];
+    
+    if (coreDataObject || !createIfNeeded) {
+        return coreDataObject;
+    }
+    else {
+        coreDataObject = [NSEntityDescription insertNewObjectForEntityForName:kGSEntityName inManagedObjectContext:self.coreDataStack.managedObjectContext];
+        coreDataObject.gs_type = type;
+        coreDataObject.gs_identifier = identifier;
+        coreDataObject.gs_creationDate = [NSDate date];
+        
+        return coreDataObject;
+    }
+}
 
 - (GSCoreDataObject *)fetchObjectWithType:(NSString *)type identifier:(NSString *)identifier {
     NSArray *objects = [self fetchObjectsWithType:type identifier:identifier];
@@ -110,44 +148,6 @@ NSString *const kGSIdentifierKey = @"gs_identifier";
     NSArray *fetchedObjects = [self.coreDataStack.managedObjectContext executeFetchRequest:fetchRequest error:nil];
     
     return fetchedObjects;
-}
-
-#pragma mark - GSManagedObjectDatasource
-
-- (GSCoreDataObject *)newGSCoreDataObjectForObject:(id<GSMappableObject>)object {
-    
-    return [self gsCoreDataObjectForObject:object createIfNeeded:YES];
-}
-
-- (GSCoreDataObject *)fetchGSCoreDataObjectForObject:(id<GSMappableObject>)object {
-    
-    return [self gsCoreDataObjectForObject:object createIfNeeded:NO];
-}
-
-- (GSCoreDataObject *)gsCoreDataObjectForObject:(id<GSMappableObject>)object createIfNeeded:(BOOL)createIfNeeded {
-    
-    id nakedObject = object;
-    GSObjectMapping *mapping = [[object class] objectMapping];
-    NSString *type = mapping.classNameForMapping;
-    NSString *identifier = [nakedObject valueForKey:mapping.identifyingAttribute];
-    
-    GSCoreDataObject *coreDataObject = [self fetchObjectWithType:type identifier:identifier];
-    
-    if (coreDataObject || !createIfNeeded) {
-        return coreDataObject;
-    }
-    
-    coreDataObject = [NSEntityDescription insertNewObjectForEntityForName:kGSEntityName inManagedObjectContext:self.coreDataStack.managedObjectContext];
-    coreDataObject.gs_type = type;
-    coreDataObject.gs_identifier = identifier;
-    coreDataObject.gs_creationDate = [NSDate date];
-    
-    return coreDataObject;
-}
-
-- (GSCoreDataObject *)fetchGSCoreDataObjectForPromise:(NSDictionary *)promise {
-   
-    return [self fetchObjectWithType:promise[kGSTypeKey] identifier:promise[kGSIdentifierKey]];
 }
 
 @end

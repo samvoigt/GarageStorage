@@ -133,7 +133,7 @@ NSString *const kGSIdentifierKey = @"gs_identifier";
     
     GSCoreDataObject *coreDataObject = [self fetchObjectWithType:type identifier:identifier];
     
-    if (object || !createIfNeeded) {
+    if (coreDataObject || !createIfNeeded) {
         return coreDataObject;
     }
     

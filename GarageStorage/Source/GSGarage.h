@@ -9,18 +9,26 @@
 #import <Foundation/Foundation.h>
 #import "GarageStorage.h"
 
-@class NSPersistentStoreCoordinator;
+@class NSPersistentStoreCoordinator, NSManagedObjectModel;
 
 @interface GSGarage : NSObject
 
 /**
  *  Creates a Garage with a peristent store coordinator provided by the user.
  *
+ *  @warning You must use the garageModel as the NSManagedObjectModel when initializing a custom persistentStoreCoordinator. When in doubt, let the Garage manage its own Core Data Stack.
  *  @param persistentStoreCoordinator An NSPersistentStoreCoordinator to use in the Garage's Core Data Stack
  *
  *  @return A GSGarage
  */
 - (instancetype)initWithPersistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator;
+
+/**
+ *  The managed object model to initialize the persistentStoreCoordinator with.
+ *
+ *  @return An NSManagedObjectModel
+ */
++ (NSManagedObjectModel *)garageModel;
 
 /**
  *  Add an object to the Garage. This will not save the object in a persistent store.

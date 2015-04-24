@@ -40,6 +40,11 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     return self;
 }
 
++ (NSManagedObjectModel *)garageModel {
+    
+    return [GSCoreDataStack garageModel];
+}
+
 - (void)parkObjectInGarage:(id<GSMappableObject>)object {
    
     [self.objectMapper mapGSMappableObjectToGSCoreDataObject:object];

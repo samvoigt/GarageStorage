@@ -28,13 +28,23 @@
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
++ (NSManagedObjectModel *)garageModel {
+    
+    static NSManagedObjectModel *garageModel;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"GarageStorage" withExtension:@"momd"];
+        garageModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+    });
+    return garageModel;
+}
+
 - (NSManagedObjectModel *)managedObjectModel {
     // The managed object model for the application. It is a fatal error for the application not to be able to find and load its model.
     if (_managedObjectModel != nil) {
         return _managedObjectModel;
     }
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"GarageStorage" withExtension:@"momd"];
-    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+    _managedObjectModel = [GSCoreDataStack garageModel];
     return _managedObjectModel;
 }
 

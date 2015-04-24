@@ -40,7 +40,7 @@ You can get a base mapping for a class with: `[GSObjectMapping mappingForClass:[
 Once you have set the properties to map, you must set the identifying attribute, or else your objects will not be parked. Under the hood, your object gets serialized to JSON, so for now, don't try to park any tricky properties. Strings, numbers (both NSNumbers and primitives), dictionaries where keys and values are Strings or NSNumbers, GSMappableObjects, and arrays of arbitrary GSMappableObjects/the other types listed here, all those should be fine.
 
 #### Parking Objects
-To park (store) a GSMappableObject in the garage, call:
+Parking an object puts a snapshot of that object into the Garage. This is different from pure Core Data, where changes to your NSManagedObjects are directly reflected in the MOC. With GarageStorage, since you're parking a snapshot, you will need to park that object any time you want changes you've made to it to be reflected/persisted. You can park the same object multiple times, which will update the existing object of that Class and Identifier. To park (store) a GSMappableObject in the garage, call:
 ```ObjC
 [self.garage parkObjectInGarage:myPerson];
 ```

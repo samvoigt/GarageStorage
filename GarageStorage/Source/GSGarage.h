@@ -64,6 +64,14 @@
 - (void)deleteObjectFromGarage:(id<GSMappableObject>)object;
 
 /**
+ *  Deletes all objects of a given type from the Garage
+ *
+ *  @param cls    A Class conforming to GSMappableObject
+ *
+ */
+- (void)deleteAllObjectsFromGarageOfClass:(Class)cls;
+
+/**
  *  Deletes all objects from the Garage. This operation will not affect the persistent store.
  */
 - (void)deleteAllObjectsFromGarage;

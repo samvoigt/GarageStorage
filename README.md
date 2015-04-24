@@ -59,6 +59,10 @@ To delete an object from the Garage, you must specify the mappable object that w
 ```ObjC
 [self.garage deleteObjectFromGarage:myPerson];
 ```
+To delete all objects of a Class, use:
+```ObjC
+[self.garage deleteAllObjectsFromGarageOfClass:[Person class]];
+```
 You can also delete all the objects from the Garage:
 ```ObjC
 [self.garage deleteAllObjectsFromGarage];

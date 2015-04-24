@@ -75,14 +75,26 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
 
 - (void)deleteObjectFromGarage:(id<GSMappableObject>)object {
    
-    [self.coreDataStack.managedObjectContext deleteObject:object];
+    GSCoreDataObject *coreDataObject = [self fetchGSCoreDataObjectForObject:object];
+    [self.coreDataStack.managedObjectContext deleteObject:coreDataObject];
+}
+
+- (void)deleteAllObjectsFromGarageOfClass:(Class)cls {
+    
+    NSArray *allObjectsOfClass = [self fetchObjectsWithType:NSStringFromClass(cls) identifier:nil];
+    [self deleteObjects:allObjectsOfClass];
 }
 
 - (void)deleteAllObjectsFromGarage {
     NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:kGSEntityName];
     NSArray *allObjects = [self.coreDataStack.managedObjectContext executeFetchRequest:fetchRequest error:nil];
     
-    for (NSManagedObject *object in allObjects) {
+    [self deleteObjects:allObjects];
+}
+
+- (void)deleteObjects:(NSArray *)objects {
+    
+    for (NSManagedObject *object in objects) {
         [self.coreDataStack.managedObjectContext deleteObject:object];
     }
 }

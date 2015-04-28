@@ -38,7 +38,7 @@
 - (void)parkObjectInGarage:(id<GSMappableObject>)object;
 
 /**
- *  Adds an array of objects to the garage. This will not save the objects in a persisten store.
+ *  Adds an array of objects to the garage. This will not save the objects in a persistent store. If you park an object that does not have an identifier set, it will go into the Garage as unidentified, and you will need to later call updateIdentifierForObject.
  *
  *  @param objects An NSArray of objects, all of which must conform to GSMappableObject.
  */
@@ -62,6 +62,15 @@
  *  @return An NSArray of objects, all of which conform to GSMappableObject
  */
 - (NSArray *)retrieveAllObjectsOfClass:(Class)cls;
+
+/**
+ *  Updates the identifier of a given GSMappableObject. If you do not set the identifier on an object when parking it, e.g. you're waiting on an ID to be returned by a server, it goes into the Garage as unidentified. Call this method once the GSMappableObject has its identifier set, and the corresponding backing object will get its identifier set.
+ *
+ *  @param object A GSMappableObject with the updated identifier.
+ *
+ *  @return YES if the update succeeds, NO if the Garage was unable to find a matching object and update its identifier.
+ */
+- (BOOL)updateIdentifierForObject:(id<GSMappableObject>)object;
 
 /**
  *  Deletes an object from the Garage. Note that deleting an object will only delete that specific object, and not any of its member variables. While parking an object into the garage is recursive, and member variables will be parked, deletion is not. Therefore, if you want an object's member variables removed from the Garage, you should remove them individually first. This operation will not affect the persistent store.

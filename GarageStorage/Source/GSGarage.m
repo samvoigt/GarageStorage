@@ -12,6 +12,7 @@
 #import "GSCoreDataObject.h"
 
 static NSString *const kGSEntityName = @"GSCoreDataObject";
+static NSString *const kGSUnidentifiedObject = @"kGSUnidentifiedObject";
 
 @interface GSGarage () <GSObjectMapperDataSource>
 
@@ -78,6 +79,77 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     return objects;
 }
 
+- (BOOL)updateIdentifierForObject:(id<GSMappableObject>)object {
+    
+    BOOL didUpdateIdentifier = NO;
+    
+    GSObjectMapping *mapping = [[object class] objectMapping];
+    NSString *type = mapping.classNameForMapping;
+    NSDictionary *jsonDictionaryForObject = [self.objectMapper jsonDictionaryFromObject:object];
+    
+    NSString *predicateString = [NSString stringWithFormat:@"%@ = \"%@\" && %@ = \"%@\"", kGSTypeKey, type, kGSIdentifierKey, kGSUnidentifiedObject];
+    NSPredicate *fetchPredicate = [NSPredicate predicateWithFormat:predicateString];
+
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:kGSEntityName];
+    fetchRequest.predicate = fetchPredicate;
+    
+    NSArray *unidentifiedObjectsOfClass = [self.coreDataStack.managedObjectContext executeFetchRequest:fetchRequest error:nil];
+    
+    id nakedObject = object;
+    for (GSCoreDataObject *coreDataObject in unidentifiedObjectsOfClass) {
+        if ([coreDataObject.gs_version isEqualToNumber:@(mapping.version)]) {
+            
+            NSDictionary *storedJSON = [self.objectMapper jsonDictionaryFromString:coreDataObject.gs_data];
+            if ([self jsonDictionary:storedJSON triviallyMatchesJSONDictionary:jsonDictionaryForObject]) {
+               
+                coreDataObject.gs_identifier = [nakedObject valueForKey:mapping.identifyingAttribute];
+                coreDataObject.gs_data = [self.objectMapper jsonStringFromDictionary:jsonDictionaryForObject];
+                didUpdateIdentifier = YES;
+                break;
+            }
+        }
+    }
+    
+    return didUpdateIdentifier;
+}
+
+// This only checks to make sure that all the keys in aJSONDictionary are in bJSONDictionary, and that the string and number values are the same. It ignores any more complicated objects (arrays, dicts, custom objects, whatever else).
+- (BOOL)jsonDictionary:(NSDictionary *)aJSONDictionary triviallyMatchesJSONDictionary:(NSDictionary *)bJSONDictionary {
+    
+    for (NSString *key in aJSONDictionary.allKeys) {
+        if (bJSONDictionary[key]) {
+            id aObject = aJSONDictionary[key];
+            id bObject = bJSONDictionary[key];
+           
+            if ([aObject isKindOfClass:[NSString class]]) {
+                if ([bObject isKindOfClass:[NSString class]]) {
+                    if (![aObject isEqualToString:bObject]) {
+                        return NO;
+                    }
+                }
+                else {
+                    return NO;
+                }
+            }
+            else if ([aObject isKindOfClass:[NSNumber class]]) {
+                if ([bObject isKindOfClass:[NSNumber class]]) {
+                    if (![aObject isEqualToNumber:bObject]) {
+                        return NO;
+                    }
+                }
+                else {
+                    return NO;
+                }
+            }
+        }
+        else {
+            return NO;
+        }
+    }
+    
+    return YES;
+}
+
 - (void)deleteObjectFromGarage:(id<GSMappableObject>)object {
    
     GSCoreDataObject *coreDataObject = [self fetchGSCoreDataObjectForObject:object];
@@ -142,7 +214,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     else {
         coreDataObject = [NSEntityDescription insertNewObjectForEntityForName:kGSEntityName inManagedObjectContext:self.coreDataStack.managedObjectContext];
         coreDataObject.gs_type = type;
-        coreDataObject.gs_identifier = identifier;
+        coreDataObject.gs_identifier = (identifier != nil && ![identifier isEqualToString:@""]) ? identifier : kGSUnidentifiedObject;
         coreDataObject.gs_creationDate = [NSDate date];
         coreDataObject.gs_version = @(mapping.version);
         

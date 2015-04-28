@@ -16,11 +16,20 @@ NSString *const kGSIdentifierKey = @"gs_identifier";
 
 - (void)mapGSMappableObjectToGSCoreDataObject:(id<GSMappableObject>)object {
     
-    NSDictionary *jsonDictionary = [self jsonDictionaryFromObject:object];
-    
     GSCoreDataObject *coreDataObject = [self.delegate newGSCoreDataObjectForObject:object];
-    coreDataObject.gs_data = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:jsonDictionary options:NSJSONWritingPrettyPrinted error:nil] encoding:NSUTF8StringEncoding];
+    coreDataObject.gs_data = [self jsonStringFromObject:object];
     coreDataObject.gs_modifiedDate = [NSDate date];
+}
+
+- (NSString *)jsonStringFromObject:(id<GSMappableObject>)object {
+
+    NSDictionary *jsonDictionary = [self jsonDictionaryFromObject:object];
+    return [self jsonStringFromDictionary:jsonDictionary];
+}
+
+- (NSString *)jsonStringFromDictionary:(NSDictionary *)jsonDictionary {
+    
+    return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:jsonDictionary options:NSJSONWritingPrettyPrinted error:nil] encoding:NSUTF8StringEncoding];
 }
 
 - (NSDictionary *)jsonDictionaryFromObject:(id<GSMappableObject>)object {
@@ -93,8 +102,7 @@ NSString *const kGSIdentifierKey = @"gs_identifier";
 - (id<GSMappableObject>)mapGSCoreDataObjectToGSMappableObject:(GSCoreDataObject *)gsCoreDataObject {
     
     NSString *className = gsCoreDataObject.gs_type;
-    NSData *jsonData = [gsCoreDataObject.gs_data dataUsingEncoding:NSUTF8StringEncoding];
-    NSDictionary *jsonDictionary = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:nil];
+    NSDictionary *jsonDictionary = [self jsonDictionaryFromString:gsCoreDataObject.gs_data];
     
     id gsObject = [NSClassFromString(className) new];
     
@@ -134,6 +142,12 @@ NSString *const kGSIdentifierKey = @"gs_identifier";
         }
     }
     return objectsArray;
+}
+
+- (NSDictionary *)jsonDictionaryFromString:(NSString *)jsonString {
+    
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    return [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:nil];
 }
 
 @end

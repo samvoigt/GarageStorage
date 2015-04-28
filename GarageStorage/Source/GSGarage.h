@@ -9,6 +9,13 @@
 #import <Foundation/Foundation.h>
 #import "GarageStorage.h"
 
+typedef NS_ENUM(NSInteger, GSSyncStatus) {
+    GSSyncStatusUndetermined,
+    GSSyncStatusNotSynced,
+    GSSyncStatusSyncing,
+    GSSyncStatusSynced
+};
+
 @class NSPersistentStoreCoordinator, NSManagedObjectModel;
 
 @interface GSGarage : NSObject
@@ -71,6 +78,31 @@
  *  @return YES if the update succeeds, NO if the Garage was unable to find a matching object and update its identifier.
  */
 - (BOOL)updateIdentifierForObject:(id<GSMappableObject>)object;
+
+/**
+ *  Sets the sync status for a given GSMappableObject
+ *
+ *  @param syncStatus The GSSyncStatus of the object
+ *  @param object     A GSMappableObject
+ *
+ *  @return YES if successful (the object was found), NO if not
+ */
+- (BOOL)setSnycStatus:(GSSyncStatus)syncStatus forObject:(id<GSMappableObject>)object;
+
+/**
+ *  Sets the sync status for an array of GSMappableObjects
+ *
+ *  @param syncStatus The GSSyncStatus of the objects
+ *  @param objects     An NSArray of GSMappableObjects
+ *
+ *  @return YES if successful (syncStatus was set on all), NO if not. Note: Even if this returns NO, there still could be objects with their syncStatus was set successfully. A NO repsonse simply indicates a minimum on 1 failure.
+ */
+- (BOOL)setSnycStatus:(GSSyncStatus)syncStatus forObjects:(NSArray *)objects;
+
+- (GSSyncStatus)syncStatusForObject:(id<GSMappableObject>)object;
+
+- (NSArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus;
+- (NSArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus ofClass:(Class)cls;
 
 /**
  *  Deletes an object from the Garage. Note that deleting an object will only delete that specific object, and not any of its member variables. While parking an object into the garage is recursive, and member variables will be parked, deletion is not. Therefore, if you want an object's member variables removed from the Garage, you should remove them individually first. This operation will not affect the persistent store.

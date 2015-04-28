@@ -7,8 +7,6 @@
 //
 
 #import "GSObjectMapper.h"
-NSString *const kGSTypeKey = @"gs_type";
-NSString *const kGSIdentifierKey = @"gs_identifier";
 
 @implementation GSObjectMapper
 

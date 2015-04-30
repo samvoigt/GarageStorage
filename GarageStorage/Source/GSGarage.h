@@ -71,15 +71,6 @@ typedef NS_ENUM(NSInteger, GSSyncStatus) {
 - (NSArray *)retrieveAllObjectsOfClass:(Class)cls;
 
 /**
- *  Updates the identifier of a given GSMappableObject. If you do not set the identifier on an object when parking it, e.g. you're waiting on an ID to be returned by a server, it goes into the Garage as unidentified. Call this method once the GSMappableObject has its identifier set, and the corresponding backing object will get its identifier set.
- *
- *  @param object A GSMappableObject with the updated identifier.
- *
- *  @return YES if the update succeeds, NO if the Garage was unable to find a matching object and update its identifier.
- */
-- (BOOL)updateIdentifierForObject:(id<GSMappableObject>)object;
-
-/**
  *  Sets the sync status for a given GSMappableObject
  *
  *  @param syncStatus The GSSyncStatus of the object
@@ -99,9 +90,32 @@ typedef NS_ENUM(NSInteger, GSSyncStatus) {
  */
 - (BOOL)setSnycStatus:(GSSyncStatus)syncStatus forObjects:(NSArray *)objects;
 
+/**
+ *  Returns the sync status for an object.
+ *
+ *  @param object A GSMappableObject
+ *
+ *  @return The Sync Status
+ */
 - (GSSyncStatus)syncStatusForObject:(id<GSMappableObject>)object;
 
+/**
+ *  Returns all the GSMappableObjects that have a given sync status
+ *
+ *  @param syncStatus The Sync Status
+ *
+ *  @return An NSArray of GSMappableObjects
+ */
 - (NSArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus;
+
+/**
+ *  Returns all the GSMappableObjects of a given class that have a given sync status
+ *
+ *  @param syncStatus The Sync Status
+ *  @param cls        The Class of the GSMappableObjects
+ *
+ *  @return An NSArray of GSMappableObjects
+ */
 - (NSArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus ofClass:(Class)cls;
 
 /**

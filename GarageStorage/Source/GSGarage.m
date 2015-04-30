@@ -12,7 +12,6 @@
 #import "GSCoreDataObject.h"
 
 static NSString *const kGSEntityName = @"GSCoreDataObject";
-static NSString *const kGSUnidentifiedObject = @"kGSUnidentifiedObject";
 
 @interface GSGarage () <GSObjectMapperDataSource>
 
@@ -75,42 +74,7 @@ static NSString *const kGSUnidentifiedObject = @"kGSUnidentifiedObject";
 
 - (NSArray *)retrieveAllObjectsOfClass:(Class)cls {
 
-    NSMutableArray *objects = [NSMutableArray new];
-    for (GSCoreDataObject *coreDataObject in [self fetchObjectsWithType:NSStringFromClass(cls) identifier:nil]) {
-        [objects addObject:[self.objectMapper mapGSCoreDataObjectToGSMappableObject:coreDataObject]];
-    }
-    
-    return objects;
-}
-
-#pragma mark - Update Identifier
-
-- (BOOL)updateIdentifierForObject:(id<GSMappableObject>)object {
-    
-    BOOL didUpdateIdentifier = NO;
-    
-    GSObjectMapping *mapping = [[object class] objectMapping];
-    NSString *type = mapping.classNameForMapping;
-    NSDictionary *jsonDictionaryForObject = [self.objectMapper jsonDictionaryFromObject:object];
-    
-    NSArray *unidentifiedObjects = [self fetchUnidentifiedObjectsOfType:type];
-    
-    id nakedObject = object;
-    for (GSCoreDataObject *coreDataObject in unidentifiedObjects) {
-        if ([coreDataObject.gs_version isEqualToNumber:@(mapping.version)]) {
-            
-            NSDictionary *storedJSON = [self.objectMapper jsonDictionaryFromString:coreDataObject.gs_data];
-            if ([self jsonDictionary:storedJSON triviallyMatchesJSONDictionary:jsonDictionaryForObject]) {
-               
-                coreDataObject.gs_identifier = [nakedObject valueForKey:mapping.identifyingAttribute];
-                coreDataObject.gs_data = [self.objectMapper jsonStringFromDictionary:jsonDictionaryForObject];
-                didUpdateIdentifier = YES;
-                break;
-            }
-        }
-    }
-    
-    return didUpdateIdentifier;
+    return [self gsMappableObjectsForGSCoreDataObjects:[self fetchObjectsWithType:NSStringFromClass(cls) identifier:nil]];
 }
 
 #pragma mark - Sync Status Setting
@@ -155,12 +119,12 @@ static NSString *const kGSUnidentifiedObject = @"kGSUnidentifiedObject";
 
 - (NSArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus {
     
-    return [self fetchObjectsWithSyncStatus:syncStatus ofType:nil];
+    return [self gsMappableObjectsForGSCoreDataObjects:[self fetchObjectsWithSyncStatus:syncStatus ofType:nil]];
 }
 
 - (NSArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus ofClass:(Class)cls {
     
-    return [self fetchObjectsWithSyncStatus:syncStatus ofType:NSStringFromClass(cls)];
+    return [self gsMappableObjectsForGSCoreDataObjects:[self fetchObjectsWithSyncStatus:syncStatus ofType:NSStringFromClass(cls)]];
 }
 
 #pragma mark - Deleting Objects
@@ -221,6 +185,11 @@ static NSString *const kGSUnidentifiedObject = @"kGSUnidentifiedObject";
     id nakedObject = object;
     NSString *identifier = [nakedObject valueForKey:mapping.identifyingAttribute];
     
+    if (!identifier) {
+        NSLog(@"Object has no identifier specified: %@", object);
+        return nil;
+    }
+    
     GSCoreDataObject *coreDataObject = [self fetchObjectWithType:type identifier:identifier];
     
     if (coreDataObject || !createIfNeeded) {
@@ -229,12 +198,21 @@ static NSString *const kGSUnidentifiedObject = @"kGSUnidentifiedObject";
     else {
         coreDataObject = [NSEntityDescription insertNewObjectForEntityForName:kGSEntityName inManagedObjectContext:self.coreDataStack.managedObjectContext];
         coreDataObject.gs_type = type;
-        coreDataObject.gs_identifier = (identifier != nil && ![identifier isEqualToString:@""]) ? identifier : kGSUnidentifiedObject;
+        coreDataObject.gs_identifier = identifier;
         coreDataObject.gs_creationDate = [NSDate date];
         coreDataObject.gs_version = @(mapping.version);
         
         return coreDataObject;
     }
+}
+
+- (NSArray *)gsMappableObjectsForGSCoreDataObjects:(NSArray *)coreDataObjects {
+    
+    NSMutableArray *gsMappableObjects = [NSMutableArray new];
+    for (GSCoreDataObject *coreDataObject in coreDataObjects) {
+        [gsMappableObjects addObject:[self.objectMapper mapGSCoreDataObjectToGSMappableObject:coreDataObject]];
+    }
+    return gsMappableObjects;
 }
 
 - (GSCoreDataObject *)fetchObjectWithType:(NSString *)type identifier:(NSString *)identifier {
@@ -253,14 +231,6 @@ static NSString *const kGSUnidentifiedObject = @"kGSUnidentifiedObject";
     NSArray *fetchedObjects = [self.coreDataStack.managedObjectContext executeFetchRequest:fetchRequest error:nil];
     
     return fetchedObjects;
-}
-
-- (NSArray *)fetchUnidentifiedObjectsOfType:(NSString *)type {
-    
-    NSFetchRequest *fetchRequest = [self gsFetchRequest];
-    fetchRequest.predicate = [self predicateForType:type identifier:kGSUnidentifiedObject];
-    
-    return [self.coreDataStack.managedObjectContext executeFetchRequest:fetchRequest error:nil];
 }
 
 - (NSArray *)fetchObjectsWithSyncStatus:(GSSyncStatus)syncStatus ofType:(NSString *)type {
@@ -294,43 +264,6 @@ static NSString *const kGSUnidentifiedObject = @"kGSUnidentifiedObject";
 - (NSFetchRequest *)gsFetchRequest {
     
     return [NSFetchRequest fetchRequestWithEntityName:kGSEntityName];
-}
-
-// This only checks to make sure that all the keys in aJSONDictionary are in bJSONDictionary, and that the string and number values are the same. It ignores any more complicated objects (arrays, dicts, custom objects, whatever else).
-- (BOOL)jsonDictionary:(NSDictionary *)aJSONDictionary triviallyMatchesJSONDictionary:(NSDictionary *)bJSONDictionary {
-    
-    for (NSString *key in aJSONDictionary.allKeys) {
-        if (bJSONDictionary[key]) {
-            id aObject = aJSONDictionary[key];
-            id bObject = bJSONDictionary[key];
-            
-            if ([aObject isKindOfClass:[NSString class]]) {
-                if ([bObject isKindOfClass:[NSString class]]) {
-                    if (![aObject isEqualToString:bObject]) {
-                        return NO;
-                    }
-                }
-                else {
-                    return NO;
-                }
-            }
-            else if ([aObject isKindOfClass:[NSNumber class]]) {
-                if ([bObject isKindOfClass:[NSNumber class]]) {
-                    if (![aObject isEqualToNumber:bObject]) {
-                        return NO;
-                    }
-                }
-                else {
-                    return NO;
-                }
-            }
-        }
-        else {
-            return NO;
-        }
-    }
-    
-    return YES;
 }
 
 @end

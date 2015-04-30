@@ -26,11 +26,6 @@
 - (id<GSMappableObject>)mapGSCoreDataObjectToGSMappableObject:(GSCoreDataObject *)gsCoreDataObject;
 - (void)mapGSMappableObjectToGSCoreDataObject:(id<GSMappableObject>)object;
 
-- (NSDictionary *)jsonDictionaryFromObject:(id<GSMappableObject>)object;
-- (NSDictionary *)jsonDictionaryFromString:(NSString *)jsonString;
-- (NSString *)jsonStringFromDictionary:(NSDictionary *)jsonDictionary;
-
-
 @property (weak, nonatomic) id<GSObjectMapperDataSource> delegate;
 
 @end

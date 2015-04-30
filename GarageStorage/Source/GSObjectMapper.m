@@ -15,8 +15,13 @@
 - (void)mapGSMappableObjectToGSCoreDataObject:(id<GSMappableObject>)object {
     
     GSCoreDataObject *coreDataObject = [self.delegate newGSCoreDataObjectForObject:object];
-    coreDataObject.gs_data = [self jsonStringFromObject:object];
-    coreDataObject.gs_modifiedDate = [NSDate date];
+    if (coreDataObject) {
+        coreDataObject.gs_data = [self jsonStringFromObject:object];
+        coreDataObject.gs_modifiedDate = [NSDate date];
+    }
+    else {
+        NSLog(@"Could not park object in Garage: %@", object);
+    }
 }
 
 - (NSString *)jsonStringFromObject:(id<GSMappableObject>)object {

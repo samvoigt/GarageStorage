@@ -79,7 +79,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
 
 #pragma mark - Sync Status Setting
 
-- (BOOL)setSnycStatus:(GSSyncStatus)syncStatus forObject:(id<GSMappableObject>)object {
+- (BOOL)setSyncStatus:(GSSyncStatus)syncStatus forObject:(id<GSMappableObject>)object {
     
     GSCoreDataObject *coreDataObject = [self gsCoreDataObjectForObject:object createIfNeeded:NO];
     if (!coreDataObject) {
@@ -90,12 +90,12 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     return YES;
 }
 
-- (BOOL)setSnycStatus:(GSSyncStatus)syncStatus forObjects:(NSArray *)objects {
+- (BOOL)setSyncStatus:(GSSyncStatus)syncStatus forObjects:(NSArray *)objects {
     
     BOOL syncSuccessful = YES;
     
     for (id<GSMappableObject> object in objects) {
-        if (![self setSnycStatus:syncStatus forObject:object]) {
+        if (![self setSyncStatus:syncStatus forObject:object]) {
             syncSuccessful = NO;
         }
     }
@@ -183,11 +183,17 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     GSObjectMapping *mapping = [[object class] objectMapping];
     NSString *type = mapping.classNameForMapping;
     id nakedObject = object;
-    NSString *identifier = [nakedObject valueForKey:mapping.identifyingAttribute];
     
-    if (!identifier) {
-        NSLog(@"Object has no identifier specified: %@", object);
-        return nil;
+    NSString *identifier;
+    if (!mapping.identifyingAttribute) {
+        identifier = [NSString stringWithFormat:@"%lu", (long unsigned)[[self.objectMapper jsonStringFromObject:object] hash]];
+    }
+    else {
+        identifier = [nakedObject valueForKey:mapping.identifyingAttribute];
+        if (!identifier) {
+            NSLog(@"Could not find identifying attribute for object: %@", object);
+            return nil;
+        }
     }
     
     GSCoreDataObject *coreDataObject = [self fetchObjectWithType:type identifier:identifier];

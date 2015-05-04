@@ -10,6 +10,7 @@
 #import "GarageStorage.h"
 
 #import "MockPersonObject.h"
+#import "Address.h"
 
 @interface ViewController ()
 

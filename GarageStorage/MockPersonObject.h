@@ -8,11 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import "GarageStorage.h"
+#import "Address.h"
+
 
 @interface MockPersonObject : NSObject <GSMappableObject>
 
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSString *state;
+@property (nonatomic, strong) Address *address;
 
 @property (nonatomic) NSInteger age;
 

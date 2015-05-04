@@ -78,7 +78,7 @@ typedef NS_ENUM(NSInteger, GSSyncStatus) {
  *
  *  @return YES if successful (the object was found), NO if not
  */
-- (BOOL)setSnycStatus:(GSSyncStatus)syncStatus forObject:(id<GSMappableObject>)object;
+- (BOOL)setSyncStatus:(GSSyncStatus)syncStatus forObject:(id<GSMappableObject>)object;
 
 /**
  *  Sets the sync status for an array of GSMappableObjects
@@ -88,7 +88,7 @@ typedef NS_ENUM(NSInteger, GSSyncStatus) {
  *
  *  @return YES if successful (syncStatus was set on all), NO if not. Note: Even if this returns NO, there still could be objects with their syncStatus was set successfully. A NO repsonse simply indicates a minimum on 1 failure.
  */
-- (BOOL)setSnycStatus:(GSSyncStatus)syncStatus forObjects:(NSArray *)objects;
+- (BOOL)setSyncStatus:(GSSyncStatus)syncStatus forObjects:(NSArray *)objects;
 
 /**
  *  Returns the sync status for an object.

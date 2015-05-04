@@ -13,7 +13,7 @@
 + (GSObjectMapping *)objectMapping {
     GSObjectMapping *mapping = [GSObjectMapping mappingForClass:[self class]];
     
-    [mapping addMappingsFromArray:@[@"name", @"state", @"age", @"siblings", @"brother"]];
+    [mapping addMappingsFromArray:@[@"name", @"address", @"age", @"siblings", @"brother"]];
     [mapping setIdentifyingAttribute:@"name"];
     
     return mapping;
@@ -23,7 +23,7 @@
     MockPersonObject *obj = [MockPersonObject new];
     
     obj.name = @"Sam";
-    obj.state = @"MA";
+    obj.address = [Address mockAddress];
     
     obj.age = 31;
     
@@ -38,7 +38,7 @@
     MockPersonObject *obj = [MockPersonObject new];
     
     obj.name = @"Nick";
-    obj.state = @"CT";
+    obj.address = [Address mockAddress];
     
     obj.age = 26;
     
@@ -49,7 +49,7 @@
     MockPersonObject *obj = [MockPersonObject new];
     
     obj.name = @"Emily";
-    obj.state = @"VT";
+    obj.address = [Address mockAddress];
     
     obj.age = 24;
     

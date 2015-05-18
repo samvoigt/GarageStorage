@@ -7,6 +7,11 @@
 //
 
 #import "GSObjectMapper.h"
+#import "NSDate+GarageStorage.h"
+
+static NSString *const kGSTransformableTypeKey = @"gs_transformableType";
+static NSString *const kGSTransformableDataKey = @"gs_transformableData";
+static NSString *const kGSTransformableDateKey = @"gs_transformableDate";
 
 @implementation GSObjectMapper
 
@@ -57,6 +62,9 @@
                 [jsonDictionary setObject:promise forKey:jsonKey];
             }
         }
+        else if ([obj isKindOfClass:[NSDate class]]) {
+            [jsonDictionary setValue:[self jsonForTransformableObject:obj] forKey:jsonKey];
+        }
         else if (obj) {
             [jsonDictionary setObject:obj forKey:jsonKey];
         }
@@ -77,6 +85,9 @@
         }
         else if ([object isKindOfClass:[NSArray class]]) {
             [jsonArray addObject:[self jsonArrayFromArray:object]];
+        }
+        else if ([object isKindOfClass:[NSDate class]]) {
+            [jsonArray addObject:[self jsonForTransformableObject:object]];
         }
         else {
             [jsonArray addObject:object];
@@ -100,6 +111,26 @@
     }
 }
 
+- (NSDictionary *)jsonForTransformableObject:(id)object {
+    
+    NSDictionary *transformableJSON;
+    if ([object isKindOfClass:[NSDate class]]) {
+        NSString *dateString = [object gs_stringFromDate];
+        transformableJSON = @{kGSTypeKey : kGSTransformableTypeKey,
+                              kGSTransformableTypeKey : kGSTransformableDateKey,
+                              kGSTransformableDataKey : dateString};
+    }
+    return transformableJSON;
+}
+
+- (id)objectForTransformableData:(NSDictionary *)transformableData {
+    
+    if ([transformableData[kGSTransformableTypeKey] isEqualToString:kGSTransformableDateKey]) {
+        return [NSDate gs_dateForString:transformableData[kGSTransformableDataKey]];
+    }
+    return nil;
+}
+
 #pragma mark - From Core Data Objects
 
 - (id<GSMappableObject>)mapGSCoreDataObjectToGSMappableObject:(GSCoreDataObject *)gsCoreDataObject {
@@ -121,6 +152,9 @@
         else if ([jsonObject isKindOfClass:[NSArray class]]) {
             [gsObject setValue:[self gsObjectsArrayFromArray:jsonObject] forKey:keyPath];
         }
+        else if ([jsonObject isKindOfClass:[NSDictionary class]] && [jsonObject[kGSTypeKey] isEqualToString:kGSTransformableTypeKey]) {
+            [gsObject setValue:[self objectForTransformableData:jsonObject] forKey:keyPath];
+        }
         else if (jsonObject) {
             [gsObject setValue:jsonObject forKey:keyPath];
         }
@@ -139,6 +173,9 @@
         }
         else if ([object isKindOfClass:[NSArray class]]) {
             [objectsArray addObject:[self gsObjectsArrayFromArray:object]];
+        }
+        else if ([object isKindOfClass:[NSDictionary class]] && [object[kGSTypeKey] isEqualToString:kGSTransformableTypeKey]) {
+            [objectsArray addObject:[self objectForTransformableData:object]];
         }
         else {
             [objectsArray addObject:object];

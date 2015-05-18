@@ -13,7 +13,7 @@
 + (GSObjectMapping *)objectMapping {
     GSObjectMapping *mapping = [GSObjectMapping mappingForClass:[self class]];
     
-    [mapping addMappingsFromArray:@[@"name", @"address", @"age", @"siblings", @"brother"]];
+    [mapping addMappingsFromArray:@[@"name", @"address", @"age", @"siblings", @"brother", @"birthdate", @"importantDates"]];
     [mapping setIdentifyingAttribute:@"name"];
     
     return mapping;
@@ -26,6 +26,8 @@
     obj.address = [Address mockAddress];
     
     obj.age = 31;
+    obj.birthdate = [NSDate date];
+    obj.importantDates = @[[NSDate date], [NSDate dateWithTimeIntervalSince1970:0], [NSDate dateWithTimeIntervalSince1970:100]];
     
     obj.siblings = @[[MockPersonObject mockObject2], [MockPersonObject mockObject3]];
     

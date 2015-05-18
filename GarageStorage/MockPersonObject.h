@@ -17,6 +17,8 @@
 @property (nonatomic, strong) Address *address;
 
 @property (nonatomic) NSInteger age;
+@property (nonatomic, strong) NSDate *birthdate;
+@property (nonatomic, strong) NSArray *importantDates;
 
 @property (nonatomic, strong) NSArray *siblings;
 @property (nonatomic, strong) MockPersonObject *brother;

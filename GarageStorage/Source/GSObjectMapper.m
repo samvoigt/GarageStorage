@@ -13,6 +13,9 @@ static NSString *const kGSTransformableTypeKey = @"gs_transformableType";
 static NSString *const kGSTransformableDataKey = @"gs_transformableData";
 static NSString *const kGSTransformableDateKey = @"gs_transformableDate";
 
+static NSString *const kGSAnonymousObject = @"kGSAnonymousObject";
+static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
+
 @implementation GSObjectMapper
 
 #pragma mark - To Core Data Objects
@@ -98,13 +101,38 @@ static NSString *const kGSTransformableDateKey = @"gs_transformableDate";
 
 - (NSDictionary *)jsonPromiseForGSMappableObject:(id<GSMappableObject>)object {
 
-    [self mapGSMappableObjectToGSCoreDataObject:object];
+    if ([[object class] objectMapping].identifyingAttribute) {
+        return [self jsonPromiseForIdentifiedGSMappableObject:object];
+    }
+    else {
+        return [self jsonPromiseForAnonymousGSMappableObject:object];
+    }
+}
 
+- (NSDictionary *)jsonPromiseForIdentifiedGSMappableObject:(id<GSMappableObject>)object {
+ 
+    [self mapGSMappableObjectToGSCoreDataObject:object];
+    
     GSCoreDataObject *promisedObject = [self.delegate fetchGSCoreDataObjectForObject:object];
     
     if (promisedObject) {
         return @{kGSIdentifierKey : promisedObject.gs_identifier,
-             kGSTypeKey : promisedObject.gs_type};
+                 kGSTypeKey : promisedObject.gs_type};
+    }
+    else {
+        return nil;
+    }
+}
+
+// "Promise" is a bit of a misnomer here, since an anonymous object is actually just mapped straight to JSON, i.e. a separate core data object isn't created, so I suppose it's a "self-fulfilling promise". Wocka wocka wocka.
+- (NSDictionary *)jsonPromiseForAnonymousGSMappableObject:(id<GSMappableObject>)object {
+       
+    NSString *jsonString = [self jsonStringFromObject:object];
+    
+    if (jsonString) {
+        return @{kGSIdentifierKey : kGSAnonymousObject,
+                 kGSTypeKey : NSStringFromClass([object class]),
+                 kGSAnonymousDataKey : jsonString};
     }
     else {
         return nil;
@@ -137,6 +165,19 @@ static NSString *const kGSTransformableDateKey = @"gs_transformableDate";
     
     NSString *className = gsCoreDataObject.gs_type;
     NSDictionary *jsonDictionary = [self jsonDictionaryFromString:gsCoreDataObject.gs_data];
+  
+    return [self gsObjectWithClassName:className withJSONDictionary:jsonDictionary];
+}
+
+- (id<GSMappableObject>)mappableObjectFromAnonymousObject:(NSDictionary *)anonymousJSONDictionary {
+  
+    NSString *className = anonymousJSONDictionary[kGSTypeKey];
+    NSDictionary *jsonDictionary = [self jsonDictionaryFromString:anonymousJSONDictionary[kGSAnonymousDataKey]];
+    
+    return [self gsObjectWithClassName:className withJSONDictionary:jsonDictionary];
+}
+
+- (id<GSMappableObject>)gsObjectWithClassName:(NSString *)className withJSONDictionary:(NSDictionary *)jsonDictionary {
     
     id gsObject = [NSClassFromString(className) new];
     
@@ -146,8 +187,13 @@ static NSString *const kGSTransformableDateKey = @"gs_transformableDate";
         NSString *jsonKey = mapping.mappings[keyPath];
         id jsonObject = jsonDictionary[jsonKey];
         if ([jsonObject isKindOfClass:[NSDictionary class]] && (NSDictionary *)jsonObject[kGSIdentifierKey]) {
-            GSCoreDataObject *promisedObject = [self.delegate fetchGSCoreDataObjectForPromise:jsonObject];
-            [gsObject setValue:[self mapGSCoreDataObjectToGSMappableObject:promisedObject] forKey:keyPath];
+            if ([self jsonObjectIsAnonymousObject:jsonObject]) {
+                [gsObject setValue:[self mappableObjectFromAnonymousObject:jsonObject] forKey:keyPath];
+            }
+            else {
+                GSCoreDataObject *promisedObject = [self.delegate fetchGSCoreDataObjectForPromise:jsonObject];
+                [gsObject setValue:[self mapGSCoreDataObjectToGSMappableObject:promisedObject] forKey:keyPath];
+            }
         }
         else if ([jsonObject isKindOfClass:[NSArray class]]) {
             [gsObject setValue:[self gsObjectsArrayFromArray:jsonObject] forKey:keyPath];
@@ -168,8 +214,13 @@ static NSString *const kGSTransformableDateKey = @"gs_transformableDate";
     
     for (id object in array) {
         if ([object isKindOfClass:[NSDictionary class]] && (NSDictionary *)object[kGSIdentifierKey]) {
-            GSCoreDataObject *promisedObject = [self.delegate fetchGSCoreDataObjectForPromise:object];
-            [objectsArray addObject:[self mapGSCoreDataObjectToGSMappableObject:promisedObject]];
+            if ([self jsonObjectIsAnonymousObject:object]) {
+                [objectsArray addObject:[self mappableObjectFromAnonymousObject:object]];
+            }
+            else {
+                GSCoreDataObject *promisedObject = [self.delegate fetchGSCoreDataObjectForPromise:object];
+                [objectsArray addObject:[self mapGSCoreDataObjectToGSMappableObject:promisedObject]];
+            }
         }
         else if ([object isKindOfClass:[NSArray class]]) {
             [objectsArray addObject:[self gsObjectsArrayFromArray:object]];
@@ -182,6 +233,11 @@ static NSString *const kGSTransformableDateKey = @"gs_transformableDate";
         }
     }
     return objectsArray;
+}
+
+- (BOOL)jsonObjectIsAnonymousObject:(NSDictionary *)jsonObject {
+    
+    return [jsonObject[kGSIdentifierKey] isEqualToString:kGSAnonymousObject];
 }
 
 - (NSDictionary *)jsonDictionaryFromString:(NSString *)jsonString {

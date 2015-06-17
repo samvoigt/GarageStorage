@@ -32,6 +32,8 @@
     sam = [garage retrieveObjectOfClass:[MockPersonObject class] identifier:@"Sam"];
     
     NSLog(@"Sam: %@", sam);
+    
+    [garage saveGarage];
 }
 
 @end

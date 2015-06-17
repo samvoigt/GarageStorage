@@ -185,6 +185,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     id nakedObject = object;
     
     NSString *identifier;
+    // This case should only happen if you're trying to park a top level object that doesn't have an identifier. If sub-objects of your top level object are anonymous, they should be rendered as inline json, and not as separate core data objects.
     if (!mapping.identifyingAttribute) {
         identifier = [NSString stringWithFormat:@"%lu", (long unsigned)[[self.objectMapper jsonStringFromObject:object] hash]];
     }

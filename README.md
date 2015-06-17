@@ -4,7 +4,7 @@ GarageStorage is designed to do two things:
 - Simplify Core Data persistance
 - Eliminate versioning Core Data datamodels/having to do xcdatamodel migrations
 
-It does this at the expense of speed and robustness. In GarageStorage, there is only one type of Core Data Entity, and all of your NSObjects are mapped into this object. Relations between NSObjects are maintained, so you do get some of the graph features of Core Data. Also, it's super alpha, so you've been warned.
+It does this at the expense of speed and robustness. In GarageStorage, there is only one type of Core Data Entity, and all of your NSObjects are mapped into this object. Relations between NSObjects are maintained, so you do get some of the graph features of Core Data. Also, it's ~~super alpha~~ in production apps although not heavily tested, so you've been warned.
 #### Getting Started
 First, create a Garage. It's called a Garage because you can park pretty much anything in it, like, you know, your garage. Create a Garage with: `[[GSGarage alloc] init]`. WARNING: You should only ever have one instance of your Garage. Feel free to make it a singleton. Or not.
 ```ObjC
@@ -37,7 +37,7 @@ You can get a base mapping for a class with: `[GSObjectMapping mappingForClass:[
     return mapping;
 }
 ```
-Once you have set the properties to map, you must set the identifying attribute, or else your objects will not be parked. Under the hood, your object gets serialized to JSON, so for now, don't try to park any tricky properties. Strings, numbers (both NSNumbers and primitives), dictionaries where keys and values are Strings or NSNumbers, GSMappableObjects, and arrays of arbitrary GSMappableObjects/the other types listed here, all those should be fine.
+Once you have set the properties to map, you should set the identifying attribute, at least for top-level objects. If you have properties which are also GSMappableObjects, you don't need them to have an identifier, but hey, if you can, that's probably better. Under the hood, your object gets serialized to JSON, so for now, don't try to park any tricky properties. Strings, numbers (both NSNumbers and primitives), dates, dictionaries where keys and values are Strings or NSNumbers, GSMappableObjects, and arrays of arbitrary GSMappableObjects/the other types listed here, all those should be fine.
 
 #### Parking Objects
 Parking an object puts a snapshot of that object into the Garage. This is different from pure Core Data, where changes to your NSManagedObjects are directly reflected in the MOC. With GarageStorage, since you're parking a snapshot, you will need to park that object any time you want changes you've made to it to be reflected/persisted. You can park the same object multiple times, which will update the existing object of that Class and Identifier. To park (store) a GSMappableObject in the garage, call:
@@ -73,3 +73,4 @@ Both parking and deleting objects do not, in and of themselves, persist their ch
 [self.garage saveGarage];
 
 ```
+There's some more stuff in there, including sync status of objects that may be sync'd with a webservice, and the ability to use your own `persistentStoreCoordinator` (which is useful for encryption purposes), so poke around `GSGarage.h` for a little more info on that. Have fun!

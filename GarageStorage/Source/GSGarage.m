@@ -63,7 +63,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
 
 #pragma mark - Retrieving Objects
 
-- (id<GSMappableObject>)retrieveObjectOfClass:(Class)cls identifier:(NSString *)identifier {
+- (id)retrieveObjectOfClass:(Class)cls identifier:(NSString *)identifier {
    
     GSCoreDataObject *object = [self fetchObjectWithType:NSStringFromClass(cls) identifier:identifier];
     if (object) {

@@ -33,6 +33,8 @@
     
     obj.brother = [MockPersonObject mockObject2];
     
+    obj.syncStatus = GSSyncStatusSyncing;
+    
     return obj;
 }
 

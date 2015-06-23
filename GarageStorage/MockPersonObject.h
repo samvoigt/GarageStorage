@@ -11,7 +11,7 @@
 #import "Address.h"
 
 
-@interface MockPersonObject : NSObject <GSMappableObject>
+@interface MockPersonObject : NSObject <GSMappableObject, GSSyncableObject>
 
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) Address *address;
@@ -22,6 +22,8 @@
 
 @property (nonatomic, strong) NSArray *siblings;
 @property (nonatomic, strong) MockPersonObject *brother;
+
+@property (nonatomic) GSSyncStatus syncStatus;
 
 + (MockPersonObject *)mockObject;
 

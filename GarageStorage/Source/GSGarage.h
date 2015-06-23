@@ -9,13 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "GarageStorage.h"
 
-typedef NS_ENUM(NSInteger, GSSyncStatus) {
-    GSSyncStatusUndetermined,
-    GSSyncStatusNotSynced,
-    GSSyncStatusSyncing,
-    GSSyncStatusSynced
-};
-
 @class NSPersistentStoreCoordinator, NSManagedObjectModel;
 
 @interface GSGarage : NSObject
@@ -54,12 +47,12 @@ typedef NS_ENUM(NSInteger, GSSyncStatus) {
 /**
  *  Fetches an object of a given class with a given identifier from the Garage.
  *
- *  @param cls        The class of the object you wish to retrieve
+ *  @param cls        The class of the object you wish to retrieve. This class must conform to GSMappableObject
  *  @param identifier The identifier of the object you wish to retrieve. This is the identifier specified by that object's mapping.
  *
  *  @return An NSObject conforming to GSMappableObject.
  */
-- (id<GSMappableObject>)retrieveObjectOfClass:(Class)cls identifier:(NSString *)identifier;
+- (id)retrieveObjectOfClass:(Class)cls identifier:(NSString *)identifier;
 
 /**
  *  Fetches all objects of a given class from the Garage.

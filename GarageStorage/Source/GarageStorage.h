@@ -11,6 +11,7 @@
 
 #import "GSObjectMapping.h"
 #import "GSMappableObject.h"
+#import "GSSyncableObject.h"
 #import "GSGarage.h"
 
 #endif

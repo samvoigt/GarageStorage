@@ -7,6 +7,7 @@
 //
 
 #import "GSObjectMapper.h"
+#import "GSSyncableObject.h"
 #import "NSDate+GarageStorage.h"
 
 static NSString *const kGSTransformableTypeKey = @"gs_transformableType";
@@ -22,10 +23,14 @@ static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
 
 - (void)mapGSMappableObjectToGSCoreDataObject:(id<GSMappableObject>)object {
     
+    id nakedObject = object;
     GSCoreDataObject *coreDataObject = [self.delegate newGSCoreDataObjectForObject:object];
     if (coreDataObject) {
         coreDataObject.gs_data = [self jsonStringFromObject:object];
         coreDataObject.gs_modifiedDate = [NSDate date];
+        if ([nakedObject conformsToProtocol:@protocol(GSSyncableObject)]) {
+            coreDataObject.gs_syncStatus = @([nakedObject syncStatus]);
+        }
     }
     else {
         NSLog(@"Could not park object in Garage: %@", object);
@@ -166,7 +171,13 @@ static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
     NSString *className = gsCoreDataObject.gs_type;
     NSDictionary *jsonDictionary = [self jsonDictionaryFromString:gsCoreDataObject.gs_data];
   
-    return [self gsObjectWithClassName:className withJSONDictionary:jsonDictionary];
+    id mappedObject = [self gsObjectWithClassName:className withJSONDictionary:jsonDictionary];
+    
+    if ([[mappedObject class] conformsToProtocol:@protocol(GSSyncableObject)]) {
+        [mappedObject setSyncStatus:[gsCoreDataObject.gs_syncStatus integerValue]];
+    }
+    
+    return mappedObject;
 }
 
 - (id<GSMappableObject>)mappableObjectFromAnonymousObject:(NSDictionary *)anonymousJSONDictionary {

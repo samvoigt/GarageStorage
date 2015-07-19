@@ -31,14 +31,19 @@
 + (NSManagedObjectModel *)garageModel;
 
 /**
- *  Add an object to the Garage. This will not save the object in a persistent store.
+ *  Since GarageStorage is backed by Core Data, changes to the managed object context are not automatically saved to disk. Therefore, after each Save/SetSyncStatus/Delete, you need to call saveGarage in order to persist those changed. However, when autosaveEnabled is set to YES, the garage will be saved after any operation that causes a change to the MOC. When NO, save calls must be performed manually. This is set to YES by default.
+ */
+@property (nonatomic) BOOL autosaveEnabled;
+
+/**
+ *  Add an object to the Garage.
  *
  *  @param object An NSObject that conforms to GSMappableObject.
  */
 - (void)parkObjectInGarage:(id<GSMappableObject>)object;
 
 /**
- *  Adds an array of objects to the garage. This will not save the objects in a persistent store. If you park an object that does not have an identifier set, it will go into the Garage as unidentified, and you will need to later call updateIdentifierForObject.
+ *  Adds an array of objects to the garage. If you park an object that does not have an identifier set, it will go into the Garage as unidentified.
  *
  *  @param objects An NSArray of objects, all of which must conform to GSMappableObject.
  */
@@ -79,7 +84,7 @@
  *  @param syncStatus The GSSyncStatus of the objects
  *  @param objects     An NSArray of GSMappableObjects
  *
- *  @return YES if successful (syncStatus was set on all), NO if not. Note: Even if this returns NO, there still could be objects with their syncStatus was set successfully. A NO repsonse simply indicates a minimum on 1 failure.
+ *  @return YES if successful (syncStatus was set on all), NO if not. Note: Even if this returns NO, there still could be objects with their syncStatus was set successfully. A NO repsonse simply indicates a minimum of 1 failure.
  */
 - (BOOL)setSyncStatus:(GSSyncStatus)syncStatus forObjects:(NSArray *)objects;
 
@@ -112,7 +117,7 @@
 - (NSArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus ofClass:(Class)cls;
 
 /**
- *  Deletes an object from the Garage. Note that deleting an object will only delete that specific object, and not any of its member variables. While parking an object into the garage is recursive, and member variables will be parked, deletion is not. Therefore, if you want an object's member variables removed from the Garage, you should remove them individually first. This operation will not affect the persistent store.
+ *  Deletes an object from the Garage. Note that deleting an object will only delete that specific object, and not any of its member variables. While parking an object into the garage is recursive, and member variables will be parked, deletion is not. Therefore, if you want an object's member variables removed from the Garage, you should remove them individually first.
  *
  *  @param object    An object conforming to GSMappableObject
  *
@@ -128,7 +133,7 @@
 - (void)deleteAllObjectsFromGarageOfClass:(Class)cls;
 
 /**
- *  Deletes all objects from the Garage. This operation will not affect the persistent store.
+ *  Deletes all objects from the Garage.
  */
 - (void)deleteAllObjectsFromGarage;
 

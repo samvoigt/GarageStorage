@@ -36,6 +36,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
         self.coreDataStack = [[GSCoreDataStack alloc] initWithPersistentStoreCoordinator:persistentStoreCoordinator];
         self.objectMapper = [GSObjectMapper new];
         self.objectMapper.delegate = self;
+        self.autosaveEnabled = YES;
     }
     return self;
 }
@@ -49,15 +50,24 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
 
 - (void)parkObjectInGarage:(id<GSMappableObject>)object {
    
-    [self.objectMapper mapGSMappableObjectToGSCoreDataObject:object];
+    [self parkObjectInGarage:object saveWhenFinished:self.autosaveEnabled];
 }
 
 - (void)parkObjectsInGarage:(NSArray *)objects {
     
     for (id object in objects) {
         if ([object conformsToProtocol:@protocol(GSMappableObject)]) {
-            [self parkObjectInGarage:object];
+            [self parkObjectInGarage:object saveWhenFinished:NO];
         }
+    }
+    [self saveGarageIfAutosaveEnabled];
+}
+
+- (void)parkObjectInGarage:(id<GSMappableObject>)object saveWhenFinished:(BOOL)saveWhenFinished {
+    
+    [self.objectMapper mapGSMappableObjectToGSCoreDataObject:object];
+    if (saveWhenFinished) {
+        [self saveGarage];
     }
 }
 
@@ -81,13 +91,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
 
 - (BOOL)setSyncStatus:(GSSyncStatus)syncStatus forObject:(id<GSMappableObject>)object {
     
-    GSCoreDataObject *coreDataObject = [self gsCoreDataObjectForObject:object createIfNeeded:NO];
-    if (!coreDataObject) {
-        return NO;
-    }
-    
-    coreDataObject.gs_syncStatus = @(syncStatus);
-    return YES;
+    return [self setSyncStatus:syncStatus forObject:object saveWhenFinsished:self.autosaveEnabled];
 }
 
 - (BOOL)setSyncStatus:(GSSyncStatus)syncStatus forObjects:(NSArray *)objects {
@@ -95,12 +99,29 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     BOOL syncSuccessful = YES;
     
     for (id<GSMappableObject> object in objects) {
-        if (![self setSyncStatus:syncStatus forObject:object]) {
+        if (![self setSyncStatus:syncStatus forObject:object saveWhenFinsished:NO]) {
             syncSuccessful = NO;
         }
     }
     
+    [self saveGarageIfAutosaveEnabled];
+    
     return syncSuccessful;
+}
+
+- (BOOL)setSyncStatus:(GSSyncStatus)syncStatus forObject:(id<GSMappableObject>)object saveWhenFinsished:(BOOL)saveWhenFinished {
+    
+    GSCoreDataObject *coreDataObject = [self gsCoreDataObjectForObject:object createIfNeeded:NO];
+    if (!coreDataObject) {
+        return NO;
+    }
+    
+    coreDataObject.gs_syncStatus = @(syncStatus);
+    if (saveWhenFinished) {
+        [self saveGarage];
+    }
+    
+    return YES;
 }
 
 #pragma mark - Sync Status Retrieving
@@ -133,19 +154,23 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
    
     GSCoreDataObject *coreDataObject = [self fetchGSCoreDataObjectForObject:object];
     [self.coreDataStack.managedObjectContext deleteObject:coreDataObject];
+    [self saveGarageIfAutosaveEnabled];
 }
 
 - (void)deleteAllObjectsFromGarageOfClass:(Class)cls {
     
     NSArray *allObjectsOfClass = [self fetchObjectsWithType:NSStringFromClass(cls) identifier:nil];
     [self deleteObjects:allObjectsOfClass];
+    [self saveGarageIfAutosaveEnabled];
 }
 
 - (void)deleteAllObjectsFromGarage {
+   
     NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:kGSEntityName];
     NSArray *allObjects = [self.coreDataStack.managedObjectContext executeFetchRequest:fetchRequest error:nil];
     
     [self deleteObjects:allObjects];
+    [self saveGarageIfAutosaveEnabled];
 }
 
 - (void)deleteObjects:(NSArray *)objects {
@@ -153,10 +178,19 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     for (NSManagedObject *object in objects) {
         [self.coreDataStack.managedObjectContext deleteObject:object];
     }
+    [self saveGarageIfAutosaveEnabled];
 }
 
 - (void)saveGarage {
+    
     [self.coreDataStack saveContext];
+}
+
+- (void)saveGarageIfAutosaveEnabled {
+    
+    if (self.autosaveEnabled) {
+        [self saveGarage];
+    }
 }
 
 #pragma mark - GSManagedObjectDatasource

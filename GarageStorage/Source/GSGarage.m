@@ -153,15 +153,20 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
 - (void)deleteObjectFromGarage:(id<GSMappableObject>)object {
    
     GSCoreDataObject *coreDataObject = [self fetchGSCoreDataObjectForObject:object];
-    [self.coreDataStack.managedObjectContext deleteObject:coreDataObject];
-    [self saveGarageIfAutosaveEnabled];
+    if (coreDataObject) {
+        [self.coreDataStack.managedObjectContext deleteObject:coreDataObject];
+        [self saveGarageIfAutosaveEnabled];
+    }
 }
 
 - (void)deleteAllObjectsFromGarageOfClass:(Class)cls {
     
     NSArray *allObjectsOfClass = [self fetchObjectsWithType:NSStringFromClass(cls) identifier:nil];
-    [self deleteObjects:allObjectsOfClass];
-    [self saveGarageIfAutosaveEnabled];
+    
+    if (allObjectsOfClass.count > 0) {
+        [self deleteObjects:allObjectsOfClass];
+        [self saveGarageIfAutosaveEnabled];
+    }
 }
 
 - (void)deleteAllObjectsFromGarage {
@@ -169,8 +174,10 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:kGSEntityName];
     NSArray *allObjects = [self.coreDataStack.managedObjectContext executeFetchRequest:fetchRequest error:nil];
     
-    [self deleteObjects:allObjects];
-    [self saveGarageIfAutosaveEnabled];
+    if (allObjects.count > 0) {
+        [self deleteObjects:allObjects];
+        [self saveGarageIfAutosaveEnabled];
+    }
 }
 
 - (void)deleteObjects:(NSArray *)objects {

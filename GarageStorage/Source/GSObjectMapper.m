@@ -135,6 +135,15 @@ static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
     NSString *jsonString = [self jsonStringFromObject:object];
     
     if (jsonString) {
+        id nakedObject = (id)object;
+        if ([nakedObject conformsToProtocol:@protocol(GSSyncableObject)]) {
+            
+            return @{kGSIdentifierKey : kGSAnonymousObject,
+                     kGSTypeKey : NSStringFromClass([object class]),
+                     kGSAnonymousDataKey : jsonString,
+                     kGSSyncStatusKey : @([nakedObject syncStatus])};
+        }
+        
         return @{kGSIdentifierKey : kGSAnonymousObject,
                  kGSTypeKey : NSStringFromClass([object class]),
                  kGSAnonymousDataKey : jsonString};
@@ -173,7 +182,7 @@ static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
   
     id mappedObject = [self gsObjectWithClassName:className withJSONDictionary:jsonDictionary];
     
-    if ([[mappedObject class] conformsToProtocol:@protocol(GSSyncableObject)]) {
+    if ([mappedObject conformsToProtocol:@protocol(GSSyncableObject)]) {
         [mappedObject setSyncStatus:[gsCoreDataObject.gs_syncStatus integerValue]];
     }
     
@@ -185,7 +194,13 @@ static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
     NSString *className = anonymousJSONDictionary[kGSTypeKey];
     NSDictionary *jsonDictionary = [self jsonDictionaryFromString:anonymousJSONDictionary[kGSAnonymousDataKey]];
     
-    return [self gsObjectWithClassName:className withJSONDictionary:jsonDictionary];
+    id mappedObject = [self gsObjectWithClassName:className withJSONDictionary:jsonDictionary];
+    
+    if ([mappedObject conformsToProtocol:@protocol(GSSyncableObject)]) {
+        [mappedObject setSyncStatus:[anonymousJSONDictionary[kGSSyncStatusKey] integerValue]];
+    }
+    
+    return mappedObject;
 }
 
 - (id<GSMappableObject>)gsObjectWithClassName:(NSString *)className withJSONDictionary:(NSDictionary *)jsonDictionary {

@@ -179,7 +179,11 @@ static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
     
     NSString *className = gsCoreDataObject.gs_type;
     NSDictionary *jsonDictionary = [self jsonDictionaryFromString:gsCoreDataObject.gs_data];
-  
+    
+    if (!jsonDictionary) {
+        return nil;
+    }
+    
     id mappedObject = [self gsObjectWithClassName:className withJSONDictionary:jsonDictionary];
     
     if ([mappedObject conformsToProtocol:@protocol(GSSyncableObject)]) {
@@ -269,6 +273,9 @@ static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
 - (NSDictionary *)jsonDictionaryFromString:(NSString *)jsonString {
     
     NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    if (!jsonData) {
+        return nil;
+    }
     return [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:nil];
 }
 

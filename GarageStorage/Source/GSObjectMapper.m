@@ -45,7 +45,7 @@ static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
 
 - (NSString *)jsonStringFromDictionary:(NSDictionary *)jsonDictionary {
     
-    return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:jsonDictionary options:NSJSONWritingPrettyPrinted error:nil] encoding:NSUTF8StringEncoding];
+    return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:jsonDictionary options:0 error:nil] encoding:NSUTF8StringEncoding];
 }
 
 - (NSDictionary *)jsonDictionaryFromObject:(id<GSMappableObject>)object {
@@ -180,7 +180,9 @@ static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
     NSString *className = gsCoreDataObject.gs_type;
     NSDictionary *jsonDictionary = [self jsonDictionaryFromString:gsCoreDataObject.gs_data];
     
+    // This shouldn't really ever happen
     if (!jsonDictionary) {
+        NSLog(@"Error: gsCoreDataObject had no data: %@", gsCoreDataObject);
         return nil;
     }
     
@@ -197,6 +199,12 @@ static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
   
     NSString *className = anonymousJSONDictionary[kGSTypeKey];
     NSDictionary *jsonDictionary = [self jsonDictionaryFromString:anonymousJSONDictionary[kGSAnonymousDataKey]];
+    
+    // This REALLY shouldn't ever happen
+    if (!jsonDictionary) {
+        NSLog(@"Error: anonymous object had no data: %@", anonymousJSONDictionary);
+        return nil;
+    }
     
     id mappedObject = [self gsObjectWithClassName:className withJSONDictionary:jsonDictionary];
     
@@ -222,7 +230,10 @@ static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
             }
             else {
                 GSCoreDataObject *promisedObject = [self.delegate fetchGSCoreDataObjectForPromise:jsonObject];
-                [gsObject setValue:[self mapGSCoreDataObjectToGSMappableObject:promisedObject] forKey:keyPath];
+                id mappableObject = [self mapGSCoreDataObjectToGSMappableObject:promisedObject];
+                if (mappableObject) {
+                    [gsObject setValue:mappableObject forKey:keyPath];
+                }
             }
         }
         else if ([jsonObject isKindOfClass:[NSArray class]]) {
@@ -249,7 +260,10 @@ static NSString *const kGSAnonymousDataKey = @"kGSAnonymousDataKey";
             }
             else {
                 GSCoreDataObject *promisedObject = [self.delegate fetchGSCoreDataObjectForPromise:object];
-                [objectsArray addObject:[self mapGSCoreDataObjectToGSMappableObject:promisedObject]];
+                id mappableObject = [self mapGSCoreDataObjectToGSMappableObject:promisedObject];
+                if (mappableObject) {
+                    [objectsArray addObject:mappableObject];
+                }
             }
         }
         else if ([object isKindOfClass:[NSArray class]]) {

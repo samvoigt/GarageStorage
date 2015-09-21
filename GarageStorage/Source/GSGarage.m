@@ -258,7 +258,10 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     
     NSMutableArray *gsMappableObjects = [NSMutableArray new];
     for (GSCoreDataObject *coreDataObject in coreDataObjects) {
-        [gsMappableObjects addObject:[self.objectMapper mapGSCoreDataObjectToGSMappableObject:coreDataObject]];
+        id gsMappableObject = [self.objectMapper mapGSCoreDataObjectToGSMappableObject:coreDataObject];
+        if (gsMappableObject) {
+            [gsMappableObjects addObject:gsMappableObject];
+        }
     }
     return gsMappableObjects;
 }

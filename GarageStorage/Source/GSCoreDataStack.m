@@ -94,8 +94,14 @@
     NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
     if (managedObjectContext != nil) {
         NSError *error = nil;
-        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        @try {
+            if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
+                NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            }
+        }
+        @catch (NSException *e) {
+            NSLog(@"GarageStorage: Could not save context");
+            NSLog(@"GarageStorage: %@", e.description);
         }
     }
 }

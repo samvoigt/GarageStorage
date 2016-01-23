@@ -12,11 +12,13 @@
 #import "GSCoreDataObject.h"
 
 static NSString *const kGSEntityName = @"GSCoreDataObject";
+static NSString *const kObjectTrackingValue = @"kObjectTrackingValue";
 
 @interface GSGarage () <GSObjectMapperDataSource>
 
 @property (strong, nonatomic) GSCoreDataStack *coreDataStack;
 @property (strong, nonatomic) GSObjectMapper *objectMapper;
+@property (strong, nonatomic) NSCache *objectTrackingPool;
 
 @end
 
@@ -36,6 +38,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
         self.coreDataStack = [[GSCoreDataStack alloc] initWithPersistentStoreCoordinator:persistentStoreCoordinator];
         self.objectMapper = [GSObjectMapper new];
         self.objectMapper.delegate = self;
+        self.objectTrackingPool = [NSCache new];
         self.autosaveEnabled = YES;
     }
     return self;
@@ -82,7 +85,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     return nil;
 }
 
-- (NSArray *)retrieveAllObjectsOfClass:(Class)cls {
+- (NSMutableArray *)retrieveAllObjectsOfClass:(Class)cls {
 
     return [self gsMappableObjectsForGSCoreDataObjects:[self fetchObjectsWithType:NSStringFromClass(cls) identifier:nil]];
 }
@@ -138,7 +141,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     return syncStatus;
 }
 
-- (NSArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus {
+- (NSMutableArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus {
     
     return [self gsMappableObjectsForGSCoreDataObjects:[self fetchObjectsWithSyncStatus:syncStatus ofType:nil]];
 }
@@ -176,13 +179,15 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     
     if (allObjects.count > 0) {
         [self deleteObjects:allObjects];
+        [self.objectTrackingPool removeAllObjects];
         [self saveGarageIfAutosaveEnabled];
     }
 }
 
 - (void)deleteObjects:(NSArray *)objects {
     
-    for (NSManagedObject *object in objects) {
+    for (GSCoreDataObject *object in objects) {
+        [self removeObjectFromTrackingPoolWithType:object.gs_type identifier:object.gs_identifier];
         [self.coreDataStack.managedObjectContext deleteObject:object];
     }
     [self saveGarageIfAutosaveEnabled];
@@ -238,7 +243,10 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
         }
     }
     
-    GSCoreDataObject *coreDataObject = [self fetchObjectWithType:type identifier:identifier];
+    GSCoreDataObject *coreDataObject = nil;
+    if ([self objectExistsInTrackingPoolOfType:type identifier:identifier]) {
+        coreDataObject = [self fetchObjectWithType:type identifier:identifier];
+    }
     
     if (coreDataObject || !createIfNeeded) {
         return coreDataObject;
@@ -250,11 +258,13 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
         coreDataObject.gs_creationDate = [NSDate date];
         coreDataObject.gs_version = @(mapping.version);
         
+        [self addObjectToTrackingPoolWithType:type identifier:identifier];
+        
         return coreDataObject;
     }
 }
 
-- (NSArray *)gsMappableObjectsForGSCoreDataObjects:(NSArray *)coreDataObjects {
+- (NSMutableArray *)gsMappableObjectsForGSCoreDataObjects:(NSArray *)coreDataObjects {
     
     NSMutableArray *gsMappableObjects = [NSMutableArray new];
     for (GSCoreDataObject *coreDataObject in coreDataObjects) {
@@ -315,6 +325,26 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
 - (NSFetchRequest *)gsFetchRequest {
     
     return [NSFetchRequest fetchRequestWithEntityName:kGSEntityName];
+}
+
+- (void)addObjectToTrackingPoolWithType:(NSString *)type identifier:(NSString *)identifier {
+    
+    [self.objectTrackingPool setObject:kObjectTrackingValue forKey:[self objectTrackingPoolKeyForType:type identifier:identifier]];
+}
+
+- (void)removeObjectFromTrackingPoolWithType:(NSString *)type identifier:(NSString *)identifier {
+
+    [self.objectTrackingPool removeObjectForKey:[self objectTrackingPoolKeyForType:type identifier:identifier]];
+}
+
+- (BOOL)objectExistsInTrackingPoolOfType:(NSString *)type identifier:(NSString *)identifier {
+    
+    return ([self.objectTrackingPool objectForKey:[self objectTrackingPoolKeyForType:type identifier:identifier]] != nil);
+}
+
+- (NSString *)objectTrackingPoolKeyForType:(NSString *)type identifier:(NSString *)identifier {
+    
+    return [NSString stringWithFormat:@"%@%@", type, identifier];
 }
 
 @end

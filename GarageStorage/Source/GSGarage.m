@@ -82,7 +82,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     return nil;
 }
 
-- (NSArray *)retrieveAllObjectsOfClass:(Class)cls {
+- (NSMutableArray *)retrieveAllObjectsOfClass:(Class)cls {
 
     return [self gsMappableObjectsForGSCoreDataObjects:[self fetchObjectsWithType:NSStringFromClass(cls) identifier:nil]];
 }
@@ -138,7 +138,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     return syncStatus;
 }
 
-- (NSArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus {
+- (NSMutableArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus {
     
     return [self gsMappableObjectsForGSCoreDataObjects:[self fetchObjectsWithSyncStatus:syncStatus ofType:nil]];
 }
@@ -254,7 +254,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     }
 }
 
-- (NSArray *)gsMappableObjectsForGSCoreDataObjects:(NSArray *)coreDataObjects {
+- (NSMutableArray *)gsMappableObjectsForGSCoreDataObjects:(NSArray *)coreDataObjects {
     
     NSMutableArray *gsMappableObjects = [NSMutableArray new];
     for (GSCoreDataObject *coreDataObject in coreDataObjects) {

@@ -21,14 +21,14 @@
  *
  *  @return A GSGarage
  */
-- (instancetype)initWithPersistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator;
+- (nonnull instancetype)initWithPersistentStoreCoordinator:(nullable NSPersistentStoreCoordinator *)persistentStoreCoordinator;
 
 /**
  *  The managed object model to initialize the persistentStoreCoordinator with.
  *
  *  @return An NSManagedObjectModel
  */
-+ (NSManagedObjectModel *)garageModel;
++ (nonnull NSManagedObjectModel *)garageModel;
 
 /**
  *  Since GarageStorage is backed by Core Data, changes to the managed object context are not automatically saved to disk. Therefore, after each Save/SetSyncStatus/Delete, you need to call saveGarage in order to persist those changed. However, when autosaveEnabled is set to YES, the garage will be saved after any operation that causes a change to the MOC. When NO, save calls must be performed manually. This is set to YES by default.
@@ -40,14 +40,14 @@
  *
  *  @param object An NSObject that conforms to GSMappableObject.
  */
-- (void)parkObjectInGarage:(id<GSMappableObject>)object;
+- (void)parkObjectInGarage:(nonnull id<GSMappableObject>)object;
 
 /**
  *  Adds an array of objects to the garage. If you park an object that does not have an identifier set, it will go into the Garage as unidentified.
  *
  *  @param objects An NSArray of objects, all of which must conform to GSMappableObject.
  */
-- (void)parkObjectsInGarage:(NSArray *)objects;
+- (void)parkObjectsInGarage:(nonnull NSArray *)objects;
 
 /**
  *  Fetches an object of a given class with a given identifier from the Garage.
@@ -57,16 +57,16 @@
  *
  *  @return An NSObject conforming to GSMappableObject.
  */
-- (id)retrieveObjectOfClass:(Class)cls identifier:(NSString *)identifier;
+- (nullable id)retrieveObjectOfClass:(nonnull Class)cls identifier:(nonnull NSString *)identifier;
 
 /**
  *  Fetches all objects of a given class from the Garage.
  *
  *  @param cls The class of the objects you wish to retrieve
  *
- *  @return An NSArray of objects, all of which conform to GSMappableObject
+ *  @return An NSMutableArray of objects, all of which conform to GSMappableObject. If no objects are found, an empty array is returned.
  */
-- (NSArray *)retrieveAllObjectsOfClass:(Class)cls;
+- (nonnull NSMutableArray *)retrieveAllObjectsOfClass:(nonnull Class)cls;
 
 /**
  *  Sets the sync status for a given GSMappableObject
@@ -76,7 +76,7 @@
  *
  *  @return YES if successful (the object was found), NO if not
  */
-- (BOOL)setSyncStatus:(GSSyncStatus)syncStatus forObject:(id<GSMappableObject>)object;
+- (BOOL)setSyncStatus:(GSSyncStatus)syncStatus forObject:(nonnull id<GSMappableObject>)object;
 
 /**
  *  Sets the sync status for an array of GSMappableObjects
@@ -86,7 +86,7 @@
  *
  *  @return YES if successful (syncStatus was set on all), NO if not. Note: Even if this returns NO, there still could be objects with their syncStatus was set successfully. A NO repsonse simply indicates a minimum of 1 failure.
  */
-- (BOOL)setSyncStatus:(GSSyncStatus)syncStatus forObjects:(NSArray *)objects;
+- (BOOL)setSyncStatus:(GSSyncStatus)syncStatus forObjects:(nonnull NSArray *)objects;
 
 /**
  *  Returns the sync status for an object.
@@ -95,16 +95,16 @@
  *
  *  @return The Sync Status
  */
-- (GSSyncStatus)syncStatusForObject:(id<GSMappableObject>)object;
+- (GSSyncStatus)syncStatusForObject:(nonnull id<GSMappableObject>)object;
 
 /**
  *  Returns all the GSMappableObjects that have a given sync status
  *
  *  @param syncStatus The Sync Status
  *
- *  @return An NSArray of GSMappableObjects
+ *  @return An NSMutableArray of GSMappableObjects. If no objects are found, an empty array is returned.
  */
-- (NSArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus;
+- (nonnull NSMutableArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus;
 
 /**
  *  Returns all the GSMappableObjects of a given class that have a given sync status
@@ -112,9 +112,9 @@
  *  @param syncStatus The Sync Status
  *  @param cls        The Class of the GSMappableObjects
  *
- *  @return An NSArray of GSMappableObjects
+ *  @return An NSMutableArray of GSMappableObjects. If no objects are found, an empty array is returned.
  */
-- (NSArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus ofClass:(Class)cls;
+- (nonnull NSMutableArray *)retrieveObjectsWithSyncStatus:(GSSyncStatus)syncStatus ofClass:(nonnull Class)cls;
 
 /**
  *  Deletes an object from the Garage. Note that deleting an object will only delete that specific object, and not any of its member variables. While parking an object into the garage is recursive, and member variables will be parked, deletion is not. Therefore, if you want an object's member variables removed from the Garage, you should remove them individually first.
@@ -122,7 +122,7 @@
  *  @param object    An object conforming to GSMappableObject
  *
  */
-- (void)deleteObjectFromGarage:(id<GSMappableObject>)object;
+- (void)deleteObjectFromGarage:(nonnull id<GSMappableObject>)object;
 
 /**
  *  Deletes all objects of a given type from the Garage
@@ -130,7 +130,7 @@
  *  @param cls    A Class conforming to GSMappableObject
  *
  */
-- (void)deleteAllObjectsFromGarageOfClass:(Class)cls;
+- (void)deleteAllObjectsFromGarageOfClass:(nonnull Class)cls;
 
 /**
  *  Deletes all objects from the Garage.

@@ -33,7 +33,7 @@
     static NSManagedObjectModel *garageModel;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"GarageStorage" withExtension:@"momd"];
+        NSURL *modelURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"GarageStorage" withExtension:@"momd"];
         garageModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     });
     return garageModel;

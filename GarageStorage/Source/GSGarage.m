@@ -10,6 +10,7 @@
 #import "GSCoreDataStack.h"
 #import "GSObjectMapper.h"
 #import "GSCoreDataObject.h"
+#import <CommonCrypto/CommonDigest.h>
 
 static NSString *const kGSEntityName = @"GSCoreDataObject";
 
@@ -228,7 +229,7 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
     NSString *identifier;
     // This case should only happen if you're trying to park a top level object that doesn't have an identifier. If sub-objects of your top level object are anonymous, they should be rendered as inline json, and not as separate core data objects.
     if (!mapping.identifyingAttribute) {
-        identifier = [NSString stringWithFormat:@"%lu", (long unsigned)[[self.objectMapper jsonStringFromObject:object] hash]];
+        identifier = [self MD5HashForString:[self.objectMapper jsonStringFromObject:object]];
     }
     else {
         identifier = [nakedObject valueForKey:mapping.identifyingAttribute];
@@ -315,6 +316,20 @@ static NSString *const kGSEntityName = @"GSCoreDataObject";
 - (NSFetchRequest *)gsFetchRequest {
     
     return [NSFetchRequest fetchRequestWithEntityName:kGSEntityName];
+}
+
+- (NSString *)MD5HashForString:(NSString *)string {
+    
+    const char* input = [string UTF8String];
+    unsigned char result[CC_MD5_DIGEST_LENGTH];
+    CC_MD5(input, (CC_LONG)strlen(input), result);
+    
+    NSMutableString *hashedString = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+    for (NSInteger i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
+        [hashedString appendFormat:@"%02x", result[i]];
+    }
+    
+    return hashedString;
 }
 
 @end
